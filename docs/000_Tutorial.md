@@ -2,6 +2,8 @@
 
 ## 1. Starlit 받기
 
+<img src="https://github.com/PJungKim/Starlit3/edit/main/docs/GITHUB_CLONE.png" width="30%" height="30%">
+
 ## 2. Scriptum 받기
 
 - Starlit의 개발환경은 HDL Works에서 제작한 [Scriptum](https://www.hdlworks.com/downloads/scriptum_soft.html)을 사용합니다. 따라서 Scriptum을 설치하시고, 서식 파일을 아래와 같이 패치해주세요.
