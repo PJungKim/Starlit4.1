@@ -1,0 +1,168 @@
+
+$import(studio);
+$import(math);
+
+
+
+///복소수의 클래스를 정의합니다. Re, Im으로 구성할 수 있겠죠?
+$class(complex_t[float]){
+	#re:float;
+	#im:float;
+}
+
+
+///실수부와 허수부 출력입니다.
+Re(z:complex_t):float{
+	return(z.re);
+}
+
+Im(z:complex_t):float{
+	return(z.im);
+}
+
+///실수를 복소수형으로!
+complex_t(x:float):complex_t{
+	return(complex_t(x, 0.00));
+}
+
+complex_t(x:int):complex_t{
+	return(complex_t(float(x), 0.00));
+}
+
+complex_t(x:int64):complex_t{
+	return(complex_t(float(x), 0.00));
+}
+
+///complex를 import하면 j는 허수단위를 의미하니 주의하세요.
+///#j():complex_t;
+##j(complex_t(0.0, 1.0));
+
+
+
+$add(z1:complex_t, z2:complex_t):complex_t{
+	return(complex_t(z1.re + z2.re, z1.im + z2.im));
+}
+
+
+$sub(z1:complex_t, z2:complex_t):complex_t{
+	return(complex_t(z1.re-z2.re, z1.im-z2.im));
+}
+
+
+$mul(z1:complex_t, z2:complex_t):complex_t{
+	return(complex_t(z1.re*z2.re-z1.im*z2.im, z1.re*z2.im+z1.im*z2.re));
+}
+
+
+$div(z1:complex_t, z2:complex_t):complex_t{
+	#a((z1.re*z2.re+z1.im*z2.im)/(z2.re*z2.re+z2.im*z2.im)):float;
+	#b((z1.im*z2.re-z1.re*z2.im)/(z2.re*z2.re+z2.im*z2.im)):float;
+	return(complex_t(a, b));
+}
+
+
+$exp(z1:complex_t, z2:complex_t):complex_t{
+	return(exp(z2 * log(z1)));
+}
+
+$minus(z1:complex_t):complex_t{
+	return(z1 * (-1.0));
+}
+
+$mod(st:ref, v:complex_t):str{
+    #s():str;
+    vsprintf1(_s, st, _v);
+    return(s);
+}
+
+$mod(st:str, v:complex_t):str{
+    #s():str;
+    vsprintf1(_s, _st, _v);
+    return(s);
+}
+
+
+///켤레복소수(Complex Conjugate)
+conj(z1:complex_t):complex_t{
+	return(complex_t(z1.re, 0.00-z1.im));
+}
+
+
+///절댓값(Absolute Value)
+abs(z1:complex_t):float{
+	return(sqrt(z1.re*z1.re + z1.im*z1.im));
+}
+
+
+///절댓값을 Complex형으로 반환합니다.
+cabs(z1:complex_t):complex_t{
+	return(complex_t(abs(z1), 0.00));
+}
+
+
+arg(z1:complex_t):float{
+	return(atan2(z1.re, z1.im));
+	///if(z1.re >= 0.0){
+///		return(atan2(z1.re, z1.im));
+///	}
+///	elif(z1.im >= 0.0){
+///		return(atan2(z1.re, z1.im) + PI);
+///	}
+///	else{
+///		return(atan2(z1.re, z1.im) - PI);
+///	}
+}
+
+carg(z1:complex_t):complex_t{
+	return(complex_t(atan2(z1.re, z1.im), 0.00));
+}
+
+sqrt(z:complex_t):complex_t{
+	#r(abs(z)):float;
+	#th(arg(z)):float;
+	
+	return(complex_t(sqrt(r)*cos(th/2), sqrt(r)*sin(th/2)));
+}
+
+exp(z:complex_t):complex_t{
+	return(exp(z.re)*complex_t(cos(z.im), sin(z.im)));
+}
+
+
+log(z1:complex_t):complex_t{
+	return(complex_t(log(abs(z1)),arg(z1)));
+}
+
+
+sin(z:complex_t):complex_t{
+	return((exp(j * z) - exp(0.00 - j * z)) / (2.00 * j));
+}
+
+
+cos(z:complex_t):complex_t{
+	return((exp(j * z) + exp(0.00 - j * z)) / 2.00);
+}
+
+sinh(z:complex_t):complex_t{
+	return((exp(z) - exp(0.00-z)) / 2.00);
+}
+
+cosh(z:complex_t):complex_t{
+	return((exp(z) + exp(0.00-z)) / 2.00);
+}
+
+
+$mod(st:ref, va:complex_t):str{
+	#s():str;
+	#r():str;
+}
+
+
+$shl(out:cout, st:complex_t) : cout{
+	#s(0):str;
+	#c(int(st.im * 1000.0) >= 0):int;
+	out << "%1.2f" % st.re << if(c, "+j", "-j") << "%1.2f" % fabs(st.im);
+	
+	return(out);
+}
+

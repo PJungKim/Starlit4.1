@@ -1,0 +1,634 @@
+/**
+
+**************Starlight 3.0**************
+*										*
+*	STarlight Universal Digital			*
+*	Input Output						*
+*										*
+*	STUDIO.shc							*
+*										*
+*	2023. 04. 01						*
+*	Maded Bi P. J. Kim					*
+*										*
+*										*
+*	Starlight,							*
+*	Virtual Machine in					*
+*	Embedded System						*
+*										*
+*	**Starlight OOP Center**			*
+*										*
+*****************************************
+
+**/
+
+///Basic Parts
+///Without those factors, starlit code doesn't work.
+
+///Standard Operators
+$import(stuop);
+
+///Operators Complements
+int(x:byte):int{
+	#result(x):int;
+	return(result & 0xFF);
+}
+
+int64(x:int):int{
+    #result(x):int64;
+    return(result & 0xFFFFFFFF);
+}
+
+///Default Constants : Bool Value and Truth.
+$const(TRUE, 1, int);
+$const(FALSE, 0, int);
+$const(NULL, 0, ref);
+
+///Defaultly, Starlit doesn't offers the unsigned type variable and short type(16-bit) variable.
+///You may define studio for 16-bit and unsigned type if you want to use it.
+
+///Previously, this pointer was the reference of self.
+##this(self_);
+
+///If I use the variable arguments, I have to define this class first.
+$class(VA_LIST){
+	#va:byte;
+}
+
+///Default For Structures
+##for{x}from{a}to{b}(for({x}={a},{x}<={b},{x}={x}+1));
+##{a}if{b}else{c}(if({b},{a},{c}));
+
+///The main function will operated by initialize function.
+svm_init(){
+	$if(definedG(OLED) && definedC(OLED_t)){
+		$if(!definedM("OLED_CUSTOMINIT") && sizeof(OLED) == sizeof(OLED_t)){
+			OLED.Init(0, 0, 96, 64);
+		}
+		$if(definedF(main)){
+			main();
+		}
+	}
+	$elif(definedF(main)){
+		main();
+	}
+}
+
+
+
+///Part 1 : Functions of Strings and Input, Output of the string.
+$class(str){
+	#string:byte[256];
+}
+
+$class(cout){
+	#val__:byte[4];
+}
+
+$class(cin){
+	#val__:byte[4];
+}
+
+$class(nullptr){
+	#val__:byte[4];
+}
+
+///Universal Output Objects
+$const(STD_cout, 4, cout);
+$const(OLED_cout, 4, cout);
+$const(FTDI_cout, 2, cout);
+$const(BLUE_cout, 1, cout);
+
+##STD_endl("\n");
+##OLED_endl("\n");
+##FTDI_endl("\n");
+##BLUE_endl("\n");
+
+///Universal Input Objects
+$const(STD_cin, 4, cin);
+$const(OLED_cin, 4, cin);
+$const(FTDI_cin, 2, cin);
+$const(BLUE_cin, 1, cin);
+
+///Output Functions
+$const(Print$ref, 0x00010012, ref);
+$const(OLED_Print$ref, 0x00010012, ref);
+$const(FTDI_Print$ref, 0x000E2012, ref);
+$const(BLUE_Print$ref, 0x000F2012, ref);
+
+///Input Objects
+$const(OLED_Scan1$ref$int$ref, 0x000A2012, ref);
+OLED_Scan(string:ref, hint:ref){
+	OLED_Scan1(string, 0, hint);
+	OLED_Clear();
+}
+
+OLED_ScanIntx(hint:ref):int{
+	stdStr = 0;
+	OLED_Scan1(_stdStr, 4, hint);
+	OLED_Clear();
+	return(Xtoi(_stdStr));
+}
+
+OLED_ScanInt(hint:ref):int{
+	stdStr = 0;
+	OLED_Scan1(_stdStr, 4, hint);
+	OLED_Clear();
+	return(Atoi(_stdStr));
+}
+
+OLED_ScanFloat(hint:ref):float{
+	stdStr = 0;
+	OLED_Scan1(_stdStr, 4, hint);
+	OLED_Clear();
+	return(Atof(_stdStr));
+}
+
+Scan(string:ref){
+	OLED_Scan1(string, 0);
+	OLED_Clear();
+}
+
+
+///UART 관련 추가제공 함수
+$const(FTDI_Begin, 0x000E0012, ref);
+$const(FTDI_End, 0x000E1012, ref);
+$const(FTDI_Write$int, 0x000E4012, ref, int);
+$const(FTDI_Read, 0x000E5012, ref, int);
+$const(FTDI_Available, 0x000E6012, ref, int);
+$const(FTDI_Scan$int$ref, 0x000E7012, ref, int);
+$const(FTDI_Flush, 0x00102012, ref);
+$const(CUSTOM_Begin, 0x000E8012, ref);
+$const(CUSTOM_End, 0x000E9012, ref);
+$const(CUSTOM_Write$int, 0x000EC012, ref, int);
+$const(CUSTOM_Read, 0x000ED012, ref, int);
+$const(CUSTOM_Available, 0x000EE012, ref, int);
+$const(CUSTOM_Scan$int$ref, 0x000EF012, ref, int);
+$const(CUSTOM_Flush, 0x00103012, ref);
+$const(BLUE_Begin, 0x000F0012, ref);
+$const(BLUE_End, 0x000F1012, ref);
+$const(BLUE_Write$int, 0x000F4012, ref);
+$const(BLUE_Read, 0x000F5012, ref, int);
+$const(BLUE_Available, 0x000F6012, ref, int);
+$const(BLUE_Scan$int$ref, 0x000F7012, ref, int);
+$const(BLUE_BeginAT, 0x000F8012, ref, int);
+$const(BLUE_Flush, 0x00104012, ref);
+
+///UART 통신제어 속도변경
+$const(FTDI_Begin$int, 0x000F9012, ref);
+$const(CUSTOM_Begin$int, 0x000FA012, ref);
+$const(BLUE_Begin$int, 0x000FB012, ref);
+
+
+///Default String Functions
+///Those are used in C-Language
+##strcpy(StrCpy);
+##strcat(StrCat);
+##strlen(StrLen);
+##strcmp(StrCmp);
+
+///String functions of Starlit.
+$const(StrCpy$ref$ref, 0x00010011, ref, ref);
+$const(StrCpy$ref$int, 0x00012011, ref, ref);
+$const(StrCpy$ref$float, 0x00013011, ref, ref);
+$const($le$ref$ref, 0x00010011, ref, ref);
+$const($le$ref$int, 0x00012011, ref, ref);
+$const($le$ref$float, 0x00013011, ref, ref);
+$const(StrCat$ref$ref, 0x00020011, ref, ref);
+$const(StrCat$ref$int, 0x00022011, ref, ref);
+$const(StrCat$ref$float, 0x00023011, ref, ref);
+$const($lt$ref$ref, 0x00020011, ref, ref);
+$const($lt$ref$int, 0x00022011, ref, ref);
+$const($lt$ref$float, 0x00023011, ref, ref);
+///Strlen
+$const(StrCmp$ref$ref, 0x00050011, ref, int);
+$const(StrLen$ref, 0x00052011, ref, int);
+
+///This is used for making printf-based functions.
+$const(vsprintf$ref$ref$ref, 0x00036011, ref);
+$const(vsprintf1$ref$ref$ref, 0x00037011, ref);
+
+///Those are defined in only Starlit.
+$const(Split$ref$int$ref, 0x00055011, ref, int);
+#stdStr(0):str;
+
+///Cout 계열 함수
+$shl(out:cout, st:ref) : cout{
+	COUT_Print__(out, st);
+	
+	return(out);
+}
+
+$shl(out:cout, st:str) : cout{
+	COUT_Print__(out, _st);
+	
+	return(out);
+}
+
+$shl(out:cout, st:int) : cout{
+	#s(0):str;
+	StrCpy(_s, st);
+	COUT_Print__(out, _s);
+	
+	return(out);
+}
+
+$shl(out:cout, st:float) : cout{
+	#s(0):str;
+	StrCpy(_s, st);
+	COUT_Print__(out, _s);
+	
+	return(out);
+}
+
+///Cin 계열 함수
+$shr(in:cin, ret_:int) : cin{
+	#st():str;
+	if(int(in) == 4){
+		OLED_Scan(_st);
+		ret = Atoi(_st);
+	}
+	elif(int(in) == 2){
+		FTDI_Scan(5, _st);
+		ret = Atoi(_st);
+	}
+	elif(int(in) == 1){
+		BLUE_Scan(5, _st);
+		ret = Atoi(_st);
+	}
+	return(in);
+}
+
+$shr(in:cin, ret_:float) : cin{
+	#st():str;
+	if(int(in) == 4){
+		OLED_Scan(_st);
+		ret = Atof(_st);
+	}
+	elif(int(in) == 2){
+		FTDI_Scan(5, _st);
+		ret = Atof(_st);
+	}
+	elif(int(in) == 1){
+		BLUE_Scan(5, _st);
+		ret = Atof(_st);
+	}
+	return(in);
+}
+
+$shr(in:cin, ret_:str) : cin{
+	#st():str;
+	if(int(in) == 4){
+		OLED_Scan(_st);
+		ret = st;
+	}
+	elif(int(in) == 2){
+		FTDI_Scan(5, _st);
+		ret = st;
+	}
+	elif(int(in) == 1){
+		BLUE_Scan(5, _st);
+		ret = st;
+	}
+	return(in);
+}
+
+$shr(in:cin, ret_:ref) : cin{
+	if(int(in) == 4){
+		OLED_Scan(_ret);
+	}
+	elif(int(in) == 2){
+		FTDI_Scan(5, _ret);
+	}
+	elif(int(in) == 1){
+		BLUE_Scan(5, _ret);
+	}
+	return(in);
+}
+
+
+COUT_Print__(out:cout, st:ref){
+	if(int(out) == 4){
+		OLED_Print(st);
+	}
+	elif(int(out) == 2){
+		FTDI_Print(st);
+	}
+	elif(int(out) == 1){
+		BLUE_Print(st);
+	}
+}
+
+///String Operators
+$add(st1:ref, st2:ref) : str{
+	#s(0):str;
+	StrCpy(_s, st1);
+	StrCat(_s, st2);
+	return(s);
+}
+
+$add(st1:str, st2:ref) : str{
+	#s(0):str;
+	StrCpy(_s, _st1);
+	StrCat(_s, st2);
+	return(s);
+}
+
+$add(st1:str, st2:str) : str{
+	#s(0):str;
+	StrCpy(_s, _st1);
+	StrCat(_s, _st2);
+	return(s);
+}
+
+$add(st1:ref, st2:str) : str{
+	#s(0):str;
+	StrCpy(_s, st1);
+	StrCat(_s, _st2);
+	return(s);
+}
+
+
+///String Format Functions
+$const($mod$ref$int, 0x00033011, ref, str);
+$const($mod$ref$float, 0x00035011, ref, str);
+$const($mod$ref$int64, 0x00034011, ref, str);
+$const($mod$ref$ref, 0x00033011, ref, str);
+
+$mod(st:ref, v:str):str{
+    return(st % _v);
+}
+
+$mod(st:str, v:int):str{
+    return(_st % v);
+}
+
+$mod(st:str, v:float):str{
+    return(_st % v);
+}
+
+$mod(st:str, v:int64):str{
+    return(_st % v);
+}
+
+$mod(st:str, v:ref):str{
+    return(_st % v);
+}
+
+$mod(st:str, v:str):str{
+    return(_st % _v);
+}
+
+///String to Value Functions
+$const(Atoi$ref, 0x00040011, ref, int);
+$const(Atol$ref, 0x00041011, ref, int64);
+$const(Atof$ref, 0x00042011, ref, float);
+$const(Xtoi$ref, 0x000C4012, ref, int);
+##atoi(Atoi);
+##atol(Atol);
+##atof(Atof);
+##xtoi(Xtoi);
+
+
+
+
+
+
+
+
+///Part 2. Default Utilities.
+///Timer Functions
+$const(Tick, 0x00100011, ref, int);
+$const(Delay$int, 0x00101011, ref);
+
+///Random 관련 함수
+$const(TrueRandom, 0x01083012, ref, int);
+$const(Random, 0x01084012, ref, int);
+
+///Scroll 관련 함수
+$const(SetScrollText$ref, 0x01100012, ref);
+$const(BeginScroll$int$int$int, 0x01102012, ref);
+$const(EndScroll, 0x01103012, ref);
+BeginScroll(freq, limit){
+	BeginScroll(freq, limit, 0);
+}
+
+///Button 관련 함수
+$const(BUTTON_Read, 0x000A0012, ref, int);
+$const(BUTTON_Read2, 0x000A1012, ref, int);
+$const(TOUCH_Begin, 0x01087012, ref);
+$const(TOUCH_End, 0x01088012, ref);
+$const(TOUCH_GetData$int, 0x01089012, ref, int);
+$const(TOUCH_GetData$int$ref, 0x0108A012, ref);
+$const(TOUCH_GetData1, 0x0108B012, ref, int);
+$const(TOUCH_Calibrate, 0x0108C012, ref);
+
+///버튼 관련 상수
+$const(BUTTON_1, 0x0100, int);
+$const(BUTTON_2, 0x0200, int);
+$const(BUTTON_3, 0x0400, int);
+$const(BUTTON_4, 0x1000, int);
+$const(BUTTON_5, 0x2000, int);
+$const(BUTTON_6, 0x4000, int);
+$const(BUTTON_7, 0x0101, int);
+$const(BUTTON_8, 0x0202, int);
+$const(BUTTON_9, 0x0404, int);
+$const(BUTTON_0, 0x2020, int);
+$const(BUTTON_STAR, 0x1010, int);
+$const(BUTTON_HASH, 0x4040, int);
+$const(BUTTON_F1, 0x0800, int);
+$const(BUTTON_F2, 0x8000, int);
+$const(BUTTON_F3, 0x0808, int);
+$const(BUTTON_F5, 0x8080, int);
+
+///버튼 관련 상수:길게
+$const(BUTTON_1L, 0x10100, int);
+$const(BUTTON_2L, 0x10200, int);
+$const(BUTTON_3L, 0x10400, int);
+$const(BUTTON_4L, 0x11000, int);
+$const(BUTTON_5L, 0x12000, int);
+$const(BUTTON_6L, 0x14000, int);
+$const(BUTTON_7L, 0x10101, int);
+$const(BUTTON_8L, 0x10202, int);
+$const(BUTTON_9L, 0x10404, int);
+$const(BUTTON_0L, 0x12020, int);
+$const(BUTTON_STARL, 0x11010, int);
+$const(BUTTON_HASHL, 0x14040, int);
+$const(BUTTON_F1L, 0x10800, int);
+$const(BUTTON_F2L, 0x18000, int);
+$const(BUTTON_F3L, 0x10808, int);
+$const(BUTTON_F5L, 0x18080, int);
+
+
+$const(BUTTON_1D, 0x20100, int);
+$const(BUTTON_2D, 0x20200, int);
+$const(BUTTON_3D, 0x20400, int);
+$const(BUTTON_4D, 0x21000, int);
+$const(BUTTON_5D, 0x22000, int);
+$const(BUTTON_6D, 0x24000, int);
+$const(BUTTON_7D, 0x20101, int);
+$const(BUTTON_8D, 0x20202, int);
+$const(BUTTON_9D, 0x20404, int);
+$const(BUTTON_0D, 0x22020, int);
+$const(BUTTON_STARD, 0x21010, int);
+$const(BUTTON_HASHD, 0x24040, int);
+$const(BUTTON_F1D, 0x20800, int);
+$const(BUTTON_F2D, 0x28000, int);
+$const(BUTTON_F3D, 0x20808, int);
+$const(BUTTON_F5D, 0x28080, int);
+
+
+
+
+
+///Part 3. GPIO제어 함수
+/**
+ ** PIN  GPIO  Functions      FGEN Pin Num
+ ** 0    PC6   GPIO(빨강 LED)  16
+ ** 1    PC7   GPIO(파랑 LED)  15
+ ** 2    PB9   GPIO           18
+ ** 3    PD0   GPIO           17
+ ** 4    PD1   GPIO           20
+ ** 5    PD3   GPIO           19
+ ** 6    PC0   ADC            10
+ ** 7    PA4   DAC            9
+ ** 8    PB1   PWM1           5
+ ** 9    PA6   PWM2           7
+ ** 10   PA7   PWM3           8
+ ** 11   PB10  TX             별도로 정의
+ ** 12   PB11  RX             별도로 정의
+**/
+
+///자체 함수 발생기 핀번호
+///1 - 5V
+///2 - 3.3V
+///3 - 1.8V
+///4 - GND
+///5 - PWM1 - P8
+///6 - Vin
+///7 - PWM2 - P9
+///8 - PWM3 - P10
+///9 - DAC  - P7 - 자체 함수 발생기의 출력
+///10 - ADC - P6
+///15       - P1
+///16       - P0
+///17       - P3
+///18       - P2
+///19       - P5
+///20       - P4
+
+$const(DigitalWrite$int$int, 0x01400012, ref);
+$const(DigitalRead$int, 0x01401012, ref, int);
+$const(HIGH, 1, int);
+$const(LOW, 0, int);
+
+$const(PinMode$int$int, 0x01402012, ref);
+$const(INPUT, 0, int);
+$const(OUTPUT, 1, int);
+$const(PWMOUT, 2, int);
+$const(UARTMODE, 2, int);
+$const(ANALOG, 3, int);
+
+$const(PullUpDown$int$int, 0x01403012, ref);
+$const(GPIO_FLOAT, 0, int);
+$const(GPIO_PULLUP, 1, int);
+$const(GPIO_PULLDOWN, 2, int);
+
+$const(OutputType$int$int, 0x01404012, ref);
+$const(GPIO_PUSHPULL, 0, int);
+$const(GPIO_OPENDRAIN, 1, int);
+
+$const(OutputSpeed$int$int, 0x01405012, ref);
+$const(GPIO_SPEED_LOW, 0, int);
+$const(GPIO_SPEED_MIDDLE, 1, int);
+$const(GPIO_SPEED_HIGH, 2, int);
+$const(GPIO_SPEED_ULTRA, 3, int);
+
+$const(PWM_Start$int, 0x01406012, ref);
+$const(PWM_Stop$int, 0x01407012, ref);
+$const(PWM_ARR$int$int, 0x01408012, ref);
+$const(PWM_Write$int$int, 0x01409012, ref);
+$const(PWM_Prescaler$int$int, 0x140A012, ref);
+$const(ADC_Enable, 0x140B012, ref);
+$const(DAC_Enable$int, 0x140C012, ref);
+$const(DAC_Disable$int, 0x140D012, ref);
+$const(DAC_Write$int$int, 0x140F012, ref);
+           
+           
+AnalogWrite(pinNum:int, data:int){
+	if(pinNum == 7 || pinNum == 13){
+		DAC_Write(data);
+	}
+}
+
+///Event LED 관련함수
+$const(ELED_Begin, 0x01010012, ref);
+$const(ELED_Write$int$int$int, 0x01012012, ref);
+$const(ELED_End, 0x01011012, ref);
+$const(ELED_GetValue$int, 0x01013012, ref);
+$const(ELED_IsBegun, 0x01014012, ref);
+
+///Sensor 관련 함수
+$const(SENSOR_Begin, 0x01080012, ref);
+$const(SENSOR_End, 0x01081012, ref);
+$const(SENSOR_Value, 0x01082012, ref, int);
+           
+
+
+///Part 4. File & Memory Functions
+///Memory Functions
+$const(MEM_AllocInit, 0x00210011, ref);
+$const(MEM_Malloc$ref$int, 0x00211011, ref);
+$const(MEM_Realloc$ref$int, 0x00212011, ref);
+$const(MEM_Free$ref, 0x00213011, ref);
+$const(MEM_AvailableSize$ref, 0x00214011, ref, int);
+$const(MEM_GarbageCollect, 0x00215011, ref);
+$const(MEM_AllocThreshold$int, 0x00216011, ref);
+
+Malloc(sf_:ref, size:int){
+	MEM_Malloc(sf_, size);
+}
+
+Realloc(sf_:ref, size:int){
+	MEM_Realloc(sf_, size);
+}
+
+Free(sf_:ref){
+	MEM_Free(sf_);
+}
+
+AvailableSize(sf:ref):int{
+	return(MEM_AvailableSize(sf_));
+}
+
+
+
+///File IO
+$const(FA_READ, 0x01, int);
+$const(FA_WRITE, 0x02, int);
+$const(FA_OPEN_EXISTING, 0x00, int);
+$const(FA_CREATE_NEW, 0x04, int);
+$const(FA_CREATE_ALWAYS, 0x08, int);
+$const(FA_OPEN_ALWAYS, 0x10, int);
+$const(FA_OPEN_APPEND, 0x30, int);
+
+$const(F_Open$ref$ref$int, 0x01502012, ref, int);
+$const(F_Close$ref, 0x01503012, ref, int);
+$const(F_Putc$int$ref, 0x0150A012, ref, int);
+$const(F_Gets$ref$int$ref, 0x0150C012, ref, int);
+##SDFile(F_GetFP());
+$const(F_GetFP, 0x0150E012, ref, ref);
+
+F_Getc(fp:ref):int{
+	#result():int;
+	#err():int;
+	err = F_Gets(_result, 1, fp);
+	result &= 0xFF;
+	if(err){
+		return(-1);
+	}
+	return(result);
+}
+
+
+
+

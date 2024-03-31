@@ -1,0 +1,103 @@
+/**
+
+**************Starlight 3.0**************
+*										*
+*	STarlight Universal Image			*
+*										*
+*	STUDIO.shc							*
+*										*
+*	2023. 04. 01						*
+*	Maded Bi P. J. Kim					*
+*										*
+*										*
+*	Starlight,							*
+*	Virtual Machine in					*
+*	Embedded System						*
+*										*
+*	**Starlight OOP Center**			*
+*										*
+*****************************************
+
+**/
+
+$class(img_t){
+///	#blue:byte[64];
+///	#green:byte[64];
+///	#red:byte[64];
+///	#intensity:byte[64];
+
+	#data:byte[4,8,8];
+}
+
+$class(color_t, int!){
+	#blue:byte;
+	#green:byte;
+	#red:byte;
+	#intensity:byte;
+}
+
+$class(hsv_t, int!){
+	#value:byte;
+	#saturation:byte;
+	#hue:byte;
+	#reserved:byte;
+}
+
+$const(IMAGE_Shift$ref$ref$int$int$int$int$int$int$int, 0x00040012, ref);
+$const(IMAGE_Sym$ref$ref$int, 0x00041012, ref);
+$const(IMAGE_Add$ref$ref$ref$int, 0x00042012, ref);
+$const(IMAGE_Sub$ref$ref$ref$int, 0x00043012, ref);
+$const(IMAGE_SubAbs$ref$ref$ref$int, 0x00044012, ref);
+$const(IMAGE_Convolution$ref$ref$ref$int, 0x00045012, ref);
+$const(IMAGE_Gaussian$ref$ref, 0x00046012, ref);
+$const(IMAGE_MultiConst$ref$ref$float$int, 0x00047012, ref);
+$const(IMAGE_Multi$ref$ref$ref$int, 0x00048012, ref);
+$const(IMAGE_Value$ref$ref$ref$int, 0x00049012, ref);
+$const(IMAGE_Value$ref$ref, 0x0004A012, ref);
+$const(IMAGE_Value$ref$ref$ref$ref$int, 0x0004B012, ref);
+$const(IMAGE_Fade$ref$ref$ref$float$int, 0x0004C012, ref);
+$const(IMAGE_Color$ref$int$int$int$int$color_t$int, 0x0004D012, ref);
+$const(IMAGE_State$ref, 0x0004E012, ref);
+
+$const(IMAGE_OneColor$ref, 0x00060012, ref, int);
+$const(IMAGE_IsSame$ref$ref, 0x00061012, ref, int);
+$const(IMAGE_IsPartOneColor$ref$color_t, 0x00062012, ref, int);
+$const(IMAGE_IsClear$ref, 0x00063012, ref, int);
+$const(IMAGE_MaxVal$ref, 0x00064012, ref, int);
+$const(IMAGE_MinVal$ref, 0x00065012, ref, int);
+
+$const(hsv_t$color_t, 0x00080012, ref, hsv_t);
+$const(color_t$hsv_t, 0x00081012, ref, color_t);
+$const(IMAGE_GetColor$ref$int$int, 0x00082012, ref, color_t);
+$const(IMAGE_SetColor$ref$int$int$color_t, 0x00083012, ref);
+$const(IMAGE_RGB2HSV$ref$ref, 0x00084012, ref);
+$const(IMAGE_HSV2RGB$ref$ref, 0x00085012, ref);
+$const(IMAGE_TransColor$ref$ref$ref, 0x00086012, ref);
+$const(IMAGE_Ghost$ref$ref$int$int, 0x00087012, ref);
+$const(IMAGE_TwoWrite$ref$int$int$int$int, 0x00088012, ref);
+$const(IMAGE_TwoPrint$ref$ref, 0x00089012, ref);
+
+$const(CHAR_Print$ref$ref$int$color_t$color_t$int$int$int, 0x000B0012, ref);
+$const(MATR_Print$ref, 0x000B1012, ref);
+$const(MATR_Clear$ref, 0x000B2012, ref);
+$const(MATR_Stop, 0x000B8012, ref);
+$const(MATR_Start, 0x000B9012, ref);
+$const(MATR_SetInterval$int, 0x000B3012, ref);
+$const(MATR_GetInterval, 0x000B4012, ref, int);
+
+
+$const(OLED_PrintImage$ref$int$int, 0x00012012, ref);
+$const(OLED_PrintImage$ref$int$int$int$int, 0x00019012, ref);
+
+
+
+$const(BMP_OpenFile$ref$ref$int, 0x01200012, ref, int);
+
+$const(IMAGE_Print$ref$int$int$int$int, 0x00088012, ref);
+$const(IMAGE_Print$ref$ref, 0x00089012, ref);
+IMAGE_Print(img:ref, st:str){
+	IMAGE_Print(img, _st);
+}
+
+
+

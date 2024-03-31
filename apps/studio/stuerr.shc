@@ -1,0 +1,55 @@
+/**
+
+**************Starlight 3.0**************
+*										*
+*	STarlight Universal Errors			*
+*										*
+*	STUERR.shc							*
+*										*
+*	2023. 04. 01						*
+*	Maded Bi P. J. Kim					*
+*										*
+*										*
+*	Starlight,							*
+*	Virtual Machine in					*
+*	Embedded System						*
+*										*
+*	**Starlight OOP Center**			*
+*										*
+*****************************************
+
+**/
+
+$import(stuimg);
+
+$class(ERROR_t){
+	#name:byte[48];
+	#code:int;
+	#screenColor:int;
+	#textColor:int;
+	#funcptr:ref;
+	
+	Init(s:ref, code:int, scol:int, tcol:int){
+		StrCpy(_(self.name), s);
+		self.code = code;
+		self.screenColor = scol;
+		self.textColor = tcol;
+	}
+}
+
+$const(Error$ref, 0x1FFFF011, ref);
+
+$const(PN$ref, 0x00E01012, ref);
+$const(FVN, 0x00E02012, ref);
+
+$const(DefaultError$int, 0x00204011, ref, ref);
+
+ERROR_t(s:ref, code:int, scol:int, tcol:int):ERROR_t{
+	#res():ERROR_t;
+	StrCpy(_res, s);
+	res.code = code;
+	res.screenColor = scol;
+	res.textColor = tcol;
+	res.funcptr = NULL;
+	return(res);
+}

@@ -1,0 +1,79 @@
+///Starlit Universal Gauge
+///For Car Driving
+
+///This library is based on complex library.
+///Please do not use j as an index of loop.
+///$import(complex);
+$import(oled);
+$import(math);
+
+
+///Gauge Class
+$class(gauge_t){
+	#oled:OLED_t;
+	#centerX:float;
+	#centerY:float;
+	#isNotHalf:int;
+	#length:float;
+	
+	#maxVal:float;
+	#curVal__:float;
+	
+	Init(x:int, y:int, w:int, h:int, maximum:float){
+		self.oled.Init(x, y, w, h);
+		self.centerX = float(w) / 2;
+		self.centerY = float(h) / 2;
+		self.isNotHalf = 1;
+		self.length = w / 4;
+		self.maxVal = maximum;
+	}
+	
+	InitWhite(x:int, y:int, w:int, h:int, maximum:float){
+		self.oled.Init(x, y, w, h, 0xFFFFFF, 0x000001);
+		self.centerX = float(w) / 2;
+		self.centerY = float(h) / 2;
+		self.isNotHalf = 1;
+		self.length = w / 4;
+		self.maxVal = maximum;
+	}
+	
+	Init(x:int, y:int, w:int, h:int, len:float, maximum:float){
+		self.oled.Init(x, y, w, h);
+		self.centerX = float(w) / 2;
+		self.centerY = float(h) / 2;
+		self.isNotHalf = 1;
+		self.length = len;
+		self.maxVal = maximum;
+	}
+	
+	
+	
+	PrintGrid(radi:float, len:float, num:int) color(col:int){
+		#i():int;
+		#d():float;
+		for (i) from (0) to (num - self.isNotHalf){
+			d = PI * (self.isNotHalf + 1) / num * i;
+			self.oled.Line(self.centerX - cos(d) * radi,
+			          self.centerY - sin(d) * radi,
+			          self.centerX - cos(d) * (radi + len),
+			          self.centerY - sin(d) * (radi + len), col);
+		}
+	}
+	
+	PrintGrid(len:float, num:int) color(col:int){
+		self.PrintGrid(self.length + 2, len, num) color(col);
+	}
+	
+	PrintValue(value:float)color(col:int){
+		#d():float;
+		///First, Erase the previous line.
+		d = PI * (self.isNotHalf + 1) * self.curVal__ / self.maxVal;
+		self.oled.Line(self.centerX, self.centerY, self.centerX - cos(d) * self.length, 
+		    self.centerY - sin(d) * self.length, self.oled.bgColor);
+		self.curVal__ = value;
+		d = PI * (self.isNotHalf + 1) * self.curVal__ / self.maxVal;
+		self.oled.Line(self.centerX, self.centerY, self.centerX - cos(d) * self.length, 
+		    self.centerY - sin(d) * self.length, col);
+	}
+}
+

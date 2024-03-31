@@ -1,0 +1,133 @@
+/**
+
+**************Starlight 3.0**************
+*										*
+*	STarlight Universal OPerators		*
+*										*
+*	STUOP.shc							*
+*										*
+*	2023. 04. 01						*
+*	Maded Bi P. J. Kim					*
+*										*
+*										*
+*	Starlight,							*
+*	Virtual Machine in					*
+*	Embedded System						*
+*										*
+*	**Starlight OOP Center**			*
+*										*
+*****************************************
+
+**/
+
+
+
+
+///Single Term Operators
+
+///Logical Not
+$const($not$int,			0x00010010,		int,	int		);
+$const($not$int64,			0x00011010,		int,	int		);
+
+///Bitwise Not
+$const($bnot$int,			0x00020010,		int,	int		);
+$const($bnot$int64,			0x00021010,		int,	int64	);
+
+///Minus
+$const($minus$int,			0x00030010,		int,	int		);
+$const($minus$int64,		0x00031010,		int,	int64	);
+$const($minus$float,		0x00032010,		int,	float	);
+
+///Boolean
+$const(Bool$int,			0x00040010,		int,	int		);
+$const(Bool$int64,			0x00041010,		int,	int		);
+
+///Casting
+$const(int$float,			0x00050010,		int,	int		);
+$const(int64$float,			0x00051010,		int,	int64	);
+///부호 문제 때문에 int를 int64로 변환하는 기능은 오버로드(반대는 추가 안함.)
+$const(int64$int,			0x00052010,		int,	int64	);
+$const(float$int,			0x00053010,		int,	float	);
+$const(float$int64,			0x00054010,		int,	float	);
+
+///Ref
+$const(val$ref,				0x00093010,		int,	int		);
+$const(int$ref,				0x00090010,		int,	int		);
+$const(int64$ref,			0x00091010,		int,	int64	);
+$const(float$ref,			0x00092010,		int,	float	);
+
+///Double Term Operators
+///Multiply
+$const($mul$int$int,		0x01010010,		int,	int		);
+$const($mul$int64$int64,	0x01011010,		int,	int64	);
+$const($mul$float$float,	0x01012010,		int,	float	);
+
+///Exponential
+$const($exp$int$int,		0x0101A010,		int,	int		);
+$const($exp$int64$int64,	0x0101B010,		int,	int64	);
+$const($exp$float$float,	0x0101C010,		int,	float	);
+
+///Division
+$const($div$int$int,		0x01020010,		int,	int		);
+$const($div$int64$int64,	0x01021010,		int,	int64	);
+$const($div$float$float,	0x01022010,		int,	float	);
+
+///Modular
+$const($mod$int$int,		0x01025010,		int,	int		);
+$const($mod$int64$int64,	0x01026010,		int,	int64	);
+
+///Addition
+$const($add$int$int,		0x01030010,		int,	int		);
+$const($add$ref$int,		0x01030010,		int,	ref		);
+$const($add$int64$int64,	0x01031010,		int,	int64	);
+$const($add$float$float,	0x01032010,		int,	float	);
+
+///Substitution
+$const($sub$int$int,		0x01040010,		int,	int		);
+$const($sub$ref$int,		0x01040010,		int,	ref		);
+$const($sub$int64$int64,	0x01041010,		int,	int64	);
+$const($sub$float$float,	0x01042010,		int,	float	);
+$const($sub$ref$ref,        0x01040010,     int,    int     );
+
+///Shift
+$const($shl$int$int,		0x01050010,		int,	int		);
+$const($shl$int64$int64,	0x01051010,		int,	int64	);
+$const($shr$int$int,		0x01052010,		int,	int		);
+$const($shr$int64$int64,	0x01053010,		int,	int64	);
+$const($shr2$int$int,		0x01054010,		int,	int		);
+$const($shr2$int64$int64,	0x01055010,		int,	int64	);
+
+///comparision
+$const($lt$int$int,			0x01060010,		int,	int		);
+$const($lt$int64$int64,		0x01061010,		int,	int		);
+$const($lt$float$float,		0x01062010,		int,	int		);
+$const($le$int$int,			0x010B0010,		int,	int		);
+$const($le$int64$int64,		0x010B1010,		int,	int		);
+$const($le$float$float,		0x010B2010,		int,	int		);
+$const($bt$int$int,			0x010C0010,		int,	int		);
+$const($bt$int64$int64,		0x010C1010,		int,	int		);
+$const($bt$float$float,		0x010C2010,		int,	int		);
+$const($be$int$int,			0x010D0010,		int,	int		);
+$const($be$int64$int64,		0x010D1010,		int,	int		);
+$const($be$float$float,		0x010D2010,		int,	int		);
+
+$const($eq$int$int,			0x01063010,		int,	int		);
+$const($eq$int64$int64,		0x01064010,		int,	int64	);
+$const($eq$float$float,		0x01065010,		int,	float	);
+$const($ne$int$int,			0x010B3010,		int,	int		);
+$const($ne$int64$int64,		0x010B4010,		int,	int64	);
+$const($ne$float$float,		0x010B5010,		int,	float	);
+
+///Bitwise Operators
+$const($band$int$int,		0x01070010,		int,	int		);
+$const($band$int64$int64,	0x01071010,		int,	int64	);
+$const($bor$int$int,		0x01072010,		int,	int		);
+$const($bor$int64$int64,	0x01073010,		int,	int64	);
+$const($bxor$int$int,		0x01074010,		int,	int		);
+$const($bxor$int64$int64,	0x01075010,		int,	int64	);
+
+
+///Logical Operators
+$const($and$int$int,		0x01080010,		int,	int		);
+$const($or$int$int,			0x01081010,		int,	int		);
+

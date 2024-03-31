@@ -1,0 +1,23 @@
+///시간을 출력하는 알고리듬입니다.
+
+
+///$import(studio);
+
+
+$const(DT_GetYear2, 0x01600012, ref, int);
+$const(DT_GetYear4, 0x01601012, ref, int);
+$const(DT_GetMonth, 0x01602012, ref, int);
+$const(DT_GetWeekDay, 0x01603012, ref, int);
+$const(DT_GetDay, 0x01604012, ref, int);
+$const(DT_GetHour, 0x01605012, ref, int);
+$const(DT_GetMinute, 0x01606012, ref, int);
+$const(DT_GetSecond, 0x01607012, ref, int);
+
+$const(DT_SetYear2$int, 0x01610012, ref);
+$const(DT_SetYear4$int, 0x01611012, ref);
+$const(DT_SetMonth$int, 0x01612012, ref);
+$const(DT_SetWeekDay$int, 0x01613012, ref);
+$const(DT_SetDay$int, 0x01614012, ref);
+$const(DT_SetHour$int, 0x01615012, ref);
+$const(DT_SetMinute$int, 0x01616012, ref);
+$const(DT_SetSecond$int, 0x01617012, ref);

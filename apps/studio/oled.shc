@@ -1,0 +1,399 @@
+
+$import(studio);
+$import(complex);
+
+
+///OLED 추가 지원 함수
+$const(OLED_Clear, 0x00017012, ref);
+$const(OLED_Color$int$int$int$int$int, 0x00013012, ref);
+$const(OLED_Line$int$int$int$int$int, 0x00015012, ref);
+$const(OLED_GLine$int$int$int$int$int, 0x0001A012, ref);
+$const(OLED_Rect$int$int$int$int$int$int, 0x0001C012, ref);
+$const(OLED_AddrWindow$int$int$int$int, 0x00016012, ref);
+$const(OLED_WriteColor$color_t, 0x00018012, ref);
+$const(OLED_SetWindow$int$int$int$int$int, 0x00E05012, ref);
+$const(OLED_GetWindow$ref$ref$ref$ref$ref, 0x00E04012, ref);
+$const(OLED_GetCursor1$ref$ref, 0x00E06012, ref);
+
+OLED_GetCursor(x_:int, y_:int){
+	OLED_GetCursor1(x_, y_);
+}
+$const(OLED_SetCursor$int$int, 0x00E07012, ref);
+
+$class(OLED_cout_t){
+	#cursorX:ref;
+	#cursorY:ref;
+}
+
+$class(OLED_t){
+	#offX:int;
+	#offY:int;
+	#width:int;
+	#height:int;
+	#fontColor:int;
+	#bgColor:int;
+	#cursorX:int;
+	#cursorY:int;
+	///#cout:OLED_cout_t;
+	
+	Init(){
+		self.offX = 0;
+		self.offY = 0;
+		self.width = 96;
+		self.height = 64;
+		self.fontColor = 0xFFFFFF;
+		self.bgColor = 0x000000;
+		self.cursorX = 1;
+		self.cursorY = 1;
+		///self.cout.cursorX = _(self.cursorX);
+		///self.cout.cursorY = _(self.cursorY);
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_Color(0, 95, 0, 63, self.bgColor);
+		OLED_cout << "/0";
+	}
+	
+	
+	Init(dot:int){///SVM 전용
+		self.offX = 20;
+		self.offY = 20;
+		self.width = 96;
+		self.height = 64;
+		self.fontColor = 0xFFFFFF;
+		self.bgColor = 0x000000;
+		self.cursorX = 1;
+		self.cursorY = 1;
+		///self.cout.cursorX = _(self.cursorX);
+		///self.cout.cursorY = _(self.cursorY);
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, dot);
+		OLED_Color(0, 95, 0, 63, self.bgColor);
+		OLED_cout << "/0";
+	}
+	
+	
+	InitWhite(){
+		self.offX = 0;
+		self.offY = 0;
+		self.width = 96;
+		self.height = 64;
+		self.fontColor = 0x010101;
+		self.bgColor = 0xFFFFFF;
+		self.cursorX = 1;
+		self.cursorY = 1;
+///		self.cout.cursorX = _(self.cursorX);
+///		self.cout.cursorY = _(self.cursorY);
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_Color(0, 95, 0, 63, self.bgColor);
+		OLED_cout << "/0";
+	}
+	
+	Init(c:int, fc:int){
+		self.offX = 0;
+		self.offY = 0;
+		self.width = 96;
+		self.height = 64;
+		self.fontColor = fc;
+		self.bgColor = c;
+		self.cursorX = 1;
+		self.cursorY = 1;
+///		self.cout.cursorX = _(self.cursorX);
+///		self.cout.cursorY = _(self.cursorY);
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_Color(0, 95, 0, 63, self.bgColor);
+		OLED_cout << "/0";
+	}
+	
+	Init(x:int, y:int, w:int, h:int){
+		self.offX = x;
+		self.offY = y;
+		self.width = w;
+		self.height = h;
+		self.fontColor = 0xFFFFFF;
+		self.bgColor = 0x000000;
+		self.cursorX = 1;
+		self.cursorY = 1;
+///		self.cout.cursorX = _(self.cursorX);
+///		self.cout.cursorY = _(self.cursorY);
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_Color(0, w - 1, 0, h - 1, self.bgColor);
+		OLED_cout << "/0";
+	}
+	
+	Init(x:int, y:int, w:int, h:int, c:int, fc:int){
+		self.offX = x;
+		self.offY = y;
+		self.width = w;
+		self.height = h;
+		self.fontColor = fc;
+		self.bgColor = c;
+		self.cursorX = 1;
+		self.cursorY = 1;
+///		self.cout.cursorX = _(self.cursorX);
+///		self.cout.cursorY = _(self.cursorY);
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_Color(0, w - 1, 0, h - 1, self.bgColor);
+		OLED_cout << "/0";
+	}
+	
+	Print(st:ref){
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+///		OLED_SetCursor(int(self.cout.cursorX), int(self.cout.cursorY));
+		OLED_SetCursor(self.cursorX, self.cursorY);
+		OLED_cout << "/#%06x" % self.fontColor + "$#%06x" % self.bgColor + st;
+		OLED_GetCursor(self.cursorX, self.cursorY);
+///		OLED_GetCursor(int(self.cout.cursorX), int(self.cout.cursorY));
+	}
+	
+	Print(st:str){
+		self.Print(_st);
+	}
+	
+	Printf(fm:ref, va:VA_LIST){
+		#st():str;
+		vsprintf(_st, fm, _va);
+		self.Print(_st);
+	}
+	
+	
+	Line(x:int, y:int, xe:int, ye:int, col:int){
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_Line(x, xe, y, ye, col);
+	}
+	
+	GLine(x:int, y:int, xe:int, ye:int, col:int){
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_GLine(x, xe, y, ye, col);
+	}
+	
+	Rectangle(x:int, y:int, xe:int, ye:int, outlinecol:int, fillcol:int){
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_Rect(x, xe, y, ye, outlinecol, fillcol);
+	}
+	
+	Pixel(x:int, y:int, col:int){
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_AddrWindow(x, y, 1, 1);
+		OLED_WriteColor(col);
+	}
+	
+	Color(x:int, y:int, xe:int, ye:int, col:int){
+	    OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_Color(x, xe, y, ye, col);
+	}
+	
+	
+	
+	Clear(){
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_Color(0, self.width-1, 0, self.height-1, self.bgColor);
+		OLED_cout << "/0";
+		self.cursorX = 1;
+		self.cursorY = 1;
+	}
+	
+	
+	
+	
+}
+
+
+
+$shr(st:ref, sf_:OLED_t):_OLED_t{
+	sf.Print(st);
+	return(sf_);
+}
+
+$shr(st:str, sf_:OLED_t):_OLED_t{
+	sf.Print(_st);
+	return(sf_);
+}
+
+$shr(v:int, sf_:OLED_t):_OLED_t{
+	sf.Print("%d" % v);
+	return(sf_);
+}
+
+$shr(v:float, sf_:OLED_t):_OLED_t{
+	sf.Print("%.2f" % v);
+	return(sf_);
+}
+
+$shl(sf_:OLED_t, st:ref):_OLED_t{
+	sf.Print(st);
+	return(sf_);
+}
+
+$shl(sf_:OLED_t, st:str):_OLED_t{
+	sf.Print(_st);
+	return(sf_);
+}
+
+$shl(sf_:OLED_t, v:int):_OLED_t{
+	sf.Print("%d" % v);
+	return(sf_);
+}
+
+$shl(sf_:OLED_t, v:float):_OLED_t{
+	sf.Print("%.2f" % v);
+	return(sf_);
+}
+
+///$if(definedC(complex_t)){
+
+///$shl(sf_:OLED_t, v:complex_t):_OLED_t{
+///    sf.Print("%.2++.2j" % v);
+///    return(sf_);
+///}
+
+///}
+
+
+///OLED 분할 시 기본적으로 정수와 소수만 입력합니다.
+$shl(v_:int, sf_:OLED_t):_OLED_t{
+	return(_(sf >> v));
+}
+
+
+
+$shr(sf_:OLED_t, v_:int):_OLED_t{
+	#buttons(int(BUTTON_0, BUTTON_1, BUTTON_2, BUTTON_3, BUTTON_4, BUTTON_5, BUTTON_6, BUTTON_7, BUTTON_8, BUTTON_9, BUTTON_STAR)):int[11];
+	#addData(int('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-')):int[11];
+	#st(0):str;
+	#a(0):int;
+	#sw():int;
+	while(1){
+		sw = BUTTON_Read();
+		#i():int;
+		for(i)from(0)to(10){
+			if(buttons[i] == sw){
+				st.string[a] = addData[i];
+				a += 1;
+				st.string[a] = 0;
+				OLED_SetCursor(sf.cursorX, sf.cursorY);
+				OLED_cout << "/#%06x" % sf.fontColor + "$#%06x" % sf.bgColor + st;
+				break(2);
+			}
+		}
+		elif(BUTTON_F1 == sw || BUTTON_F1L == sw){
+			if(a > 0){
+				a -= 1;
+				st.string[a] = 0;
+				OLED_SetCursor(sf.cursorX, sf.cursorY);
+				OLED_cout << "/#%06x" % sf.fontColor + "$#%06x" % sf.bgColor + st + " ";
+			}
+		}
+		elif(BUTTON_F5 == sw){
+			OLED_SetCursor(sf.cursorX, sf.cursorY);
+			OLED_cout << "/#%06x" % sf.fontColor + "$#%06x" % sf.bgColor + st;
+			break(2);
+		}
+	}
+	///최종 입력 확정.(커서 위치 조정)
+	OLED_GetCursor(sf.cursorX, sf.cursorY);
+	#result():int;
+	result = Atoi(_st);
+	v = result;
+	return(sf_);
+}
+
+///OLED 분할 시 기본적으로 정수와 소수만 입력합니다.
+$shl2(v_:int, sf_:OLED_t):_OLED_t{
+	return(_(sf >>> v));
+}
+
+$shr2(sf_:OLED_t, v_:int):_OLED_t{
+	#buttons(int(BUTTON_0, BUTTON_1, BUTTON_2, BUTTON_3, BUTTON_4, BUTTON_5, BUTTON_6, BUTTON_7, BUTTON_8, BUTTON_9, BUTTON_STAR)):int[11];
+	#addData(int('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-')):int[11];
+	#buttonls(int(BUTTON_1L, BUTTON_2L, BUTTON_3L, BUTTON_4L, BUTTON_5L, BUTTON_6L)):int[6];
+	#addDatal(int('A', 'B', 'C', 'D', 'E', 'F')):int[6];
+	#st(0):str;
+	#a(0):int;
+	#sw():int;
+	while(1){
+		sw = BUTTON_Read();
+		#i():int;
+		for(i)from(0)to(10){
+			if(buttons[i] == sw){
+				st.string[a] = addData[i];
+				a += 1;
+				st.string[a] = 0;
+				OLED_SetCursor(sf.cursorX, sf.cursorY);
+				OLED_cout << "/#%06x" % sf.fontColor + "$#%06x" % sf.bgColor + st;
+				break(2);
+			}
+			elif(i < 6){
+				if(buttonls[i] == sw){///현재 위치를 16진법으로 변경. 0~5만 A~F가되는 식.
+					st.string[a - 1] = addDatal[i];
+					OLED_SetCursor(sf.cursorX, sf.cursorY);
+					OLED_cout << "/#%06x" % sf.fontColor + "$#%06x" % sf.bgColor + st;
+					break(2);
+				}
+			}
+		}
+		elif(BUTTON_F1 == sw || BUTTON_F1L == sw){
+			if(a > 0){
+				a -= 1;
+				st.string[a] = 0;
+				OLED_SetCursor(sf.cursorX, sf.cursorY);
+				OLED_cout << "/#%06x" % sf.fontColor + "$#%06x" % sf.bgColor + st + " ";
+			}
+		}
+		elif(BUTTON_F5 == sw){
+			OLED_SetCursor(sf.cursorX, sf.cursorY);
+			OLED_cout << "/#%06x" % sf.fontColor + "$#%06x" % sf.bgColor + st;
+			break(2);
+		}
+	}
+	///최종 입력 확정.(커서 위치 조정)
+	OLED_GetCursor(sf.cursorX, sf.cursorY);
+	#result():int;
+	#st2():str;
+	result = Xtoi(_st);
+	v = result;
+	return(sf_);
+}
+
+
+$shl(v_:float, sf_:OLED_t):_OLED_t{
+	return(_(sf >> v));
+}
+
+$shr(sf_:OLED_t, v_:float):_OLED_t{
+	#buttons(int(BUTTON_0, BUTTON_1, BUTTON_2, BUTTON_3, BUTTON_4, BUTTON_5, BUTTON_6, BUTTON_7, BUTTON_8, BUTTON_9, BUTTON_STAR, BUTTON_HASH)):int[12];
+	#addData(int('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.')):int[12];
+	#st(0):str;
+	#a(0):int;
+	#sw():int;
+	while(1){
+		sw = BUTTON_Read();
+		#i():int;
+		for(i)from(0)to(11){
+			if(buttons[i] == sw){
+				st.string[a] = addData[i];
+				a += 1;
+				st.string[a] = 0;
+				OLED_SetCursor(sf.cursorX, sf.cursorY);
+				OLED_cout << "/#%06x" % sf.fontColor + "$#%06x" % sf.bgColor + st;
+				break(2);
+			}
+		}
+		elif(BUTTON_F1 == sw || BUTTON_F1L == sw){
+			if(a > 0){
+				a -= 1;
+				st.string[a] = 0;
+				OLED_SetCursor(sf.cursorX, sf.cursorY);
+				OLED_cout << "/#%06x" % sf.fontColor + "$#%06x" % sf.bgColor + st + " ";
+			}
+		}
+		elif(BUTTON_F5 == sw){
+			OLED_SetCursor(sf.cursorX, sf.cursorY);
+			OLED_cout << "/#%06x" % sf.fontColor + "$#%06x" % sf.bgColor + st;
+			break(2);
+		}
+	}
+	///최종 입력 확정.(커서 위치 조정)
+	OLED_GetCursor(sf.cursorX, sf.cursorY);
+	#result():float;
+	result = Atof(_st);
+	v = result;
+	return(sf_);
+}

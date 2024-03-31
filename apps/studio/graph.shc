@@ -1,0 +1,842 @@
+/**
+
+**************Starlight 3.0**************
+*										*
+*	Graph Module						*
+*										*
+*	Graph.shc							*
+*										*
+*	2023. 04. 01						*
+*	Maded Bi P. J. Kim					*
+*										*
+*										*
+*	Starlight,							*
+*	Virtual Machine in					*
+*	Embedded System						*
+*										*
+*	**Starlight OOP Center**			*
+*   KONKUK University					*
+*										*
+*****************************************
+
+**/
+
+
+
+
+
+$import(oled);
+$import(complex);
+
+$class(graph_t){
+    #oled:OLED_t;
+    #origin:complex_t;
+    #scale:complex_t;
+    #points:complex_t[100];
+    #idx:int;
+    #interval:float;
+    
+    Init(oledOrigin:complex_t, oledSize:complex_t, origin:complex_t, scale:complex_t){
+        ///해결해야 할 이슈 : int는 float보다 하위 클래스이므로 Init이 여러개 정의되면 정의 에러가 뜰 수 있다.
+        self.oled.Init(oledOrigin.re, oledOrigin.im, oledSize.re, oledSize.im);
+        self.origin = origin;
+        self.scale = scale;
+    }
+    
+    SetPoints(func:ref, xi:float, xe:float, h:float){
+        #i(0):int;
+        while(xi + i * h <= xe){
+            self.points[i].re = xi + i * h;
+            self.points[i].im = float(func(self.points[i].re));
+            i += 1;
+        }
+        self.idx = i;
+    }
+    
+    Semilogx(func:ref, xi:float, xe:float, h:float){
+        #i(0):int;
+        while(xi + i * h <= xe){
+            self.points[i].re = xi + i * h;
+            self.points[i].im = float(func(10 ^^ self.points[i].re));
+            i += 1;
+        }
+        self.idx = i;
+    }
+    
+    Bode(func:ref, xi:float, xe:float, h:float){
+        #i(0):int;
+        while(xi + i * h <= xe){
+            self.points[i].re = xi + i * h;
+            self.points[i].im = log10(abs(complex_t(func(j * 10 ^^ self.points[i].re)))) * 20;
+            i += 1;
+        }
+        self.idx = i;
+    }
+    
+    CopyData(arr:ref, size:int){
+        #i(0):int;
+        for(i = 0, i < size, i+=1){
+            self.points[i].re = i;
+            self.points[i].im = float(arr)[i];
+        }
+        self.idx = i;
+    }
+    
+    AutoScale(){
+        ///최댓값, 최솟값을 조사한 뒤 스케일링을 자동으로 합니다.
+    }
+    
+    Print(color:int){
+        #i():int;
+        for(i)from(1)to(self.idx-1){
+            self.oled.GLine(self.origin.re + self.points[i-1].re / self.scale.re,
+                           self.origin.im - self.points[i-1].im / self.scale.im, 
+                           self.origin.re + self.points[i].re / self.scale.re, 
+                           self.origin.im - self.points[i].im / self.scale.im, color);
+        }
+    }
+    
+    ///아래 Axis는 원점 기준으로 표시됩니다.
+    ///Value 표시는 눈금 간격만 표시합니다.
+    Axis(color:int){
+        ///Axis 표시. - x축, y축
+        self.oled.Line(0, self.origin.im, self.oled.width - 1, self.origin.im, color);
+        self.oled.Line(self.origin.re, 0, self.origin.re, self.oled.height - 1, color);
+    }
+    
+    
+    Grid(color:int, h2:complex_t, txtfmt1:ref, txtfmt2:ref){
+        self.Grid(color, h2, txtfmt1, txtfmt2, 0);
+    }
+    ///아래는 Grid입니다.
+    Grid(color:int, h2:complex_t, txtfmt1:ref, txtfmt2:ref, logScale:int){
+        #i():int;
+        for(i = 0, self.origin.re + i * h2.re / self.scale.re < self.oled.width - 1, i+=1){
+            self.oled.Line(self.origin.re + i * h2.re / self.scale.re, 0,
+                           self.origin.re + i * h2.re / self.scale.re, self.oled.height - 1, color);
+            if(val(txtfmt1)){
+                self.oled.cursorX = self.origin.re + i * h2.re / self.scale.re + 2;
+                self.oled.cursorY = self.oled.height - 9;
+                if(logScale & 0x01){self.oled.Printf(txtfmt1, 10 ^^ (i * h2.re));}
+                else{self.oled.Printf(txtfmt1, i * h2.re);}
+            }
+        }
+        for(i = (-1), self.origin.re + i * h2.re / self.scale.re > 0.0, i-=1){
+            self.oled.Line(self.origin.re + i * h2.re / self.scale.re, 0,
+                           self.origin.re + i * h2.re / self.scale.re, self.oled.height - 1, color);
+            if(val(txtfmt1)){
+                self.oled.cursorX = self.origin.re + i * h2.re / self.scale.re + 2;
+                self.oled.cursorY = self.oled.height - 9;
+                if(logScale & 0x01){self.oled.Printf(txtfmt1, 10 ^^ (i * h2.re));}
+                else{self.oled.Printf(txtfmt1, i * h2.re);}
+            }
+        }
+        
+        for(i = 0, self.origin.im - i * h2.im / self.scale.im > 0.0, i+=1){
+            self.oled.Line(0, self.origin.im - i * h2.im / self.scale.im,
+                           self.oled.width, self.origin.im - i * h2.im / self.scale.im, color);
+            if(val(txtfmt2)){
+                self.oled.cursorX = 1;
+                self.oled.cursorY = self.origin.im - i * h2.im / self.scale.im + 2;
+                self.oled.Printf(txtfmt2, i * h2.im);
+            }
+        }
+        for(i = (-1), self.origin.im - i * h2.im / self.scale.im < self.oled.height, i-=1){
+            self.oled.Line(0, self.origin.im - i * h2.im / self.scale.im,
+                           self.oled.width, self.origin.im - i * h2.im / self.scale.im, color);
+            if(val(txtfmt2)){
+                self.oled.cursorX = 1;
+                self.oled.cursorY = self.origin.im - i * h2.im / self.scale.im + 2;
+                self.oled.Printf(txtfmt2, i * h2.im);
+            }
+        }
+        
+        
+        
+    }
+    
+}
+
+
+
+
+
+
+
+
+///$class(GSketch_t){
+///	#val__ : int64[96];
+///}
+///
+///$const(GRAPH_SketchInit$ref, 0x1307012, ref);
+///
+///$const(GRAPH_Line$ref$int$int$int$int, 0x1304012, ref);
+///$const(GRAPH_Print$ref$ref$ref$float$float$int$int$int, 0x01305012, ref);
+///$const(GRAPH_Display$ref$int, 0x01306012, ref);
+///$const(GRAPH_Fill$ref$ref$int$int, 0x01308012, ref);
+///
+///$const(Data$ref, 0x00E00012, ref);
+///
+///GRAPH_Synthesis(func__:ref, h:float, xi:float, xe:float, xList:ref, yList:ref):int{
+///	#x():float;
+///	#y():float;
+///	#i(0):int;
+///	
+///	x = xi;
+///	while(x <= xe){
+///		float(xList)[i] = x;
+///		y = func__(x);
+///		float(yList)[i] = y;
+///		i = i + 1;
+///		x = x + h;
+///	}
+///	
+///	return(i);
+///	
+///}
+///
+///GRAPH_Synth2(func1__:ref, func2__:ref, h:float, xi:float, xe:float, xList:ref, yList:ref):int{
+///	#t():float;
+///	#x():float;
+///	#y():float;
+///	#i(0):int;
+///	
+///	t = xi;
+///	while(t <= xe){
+///		x = func1__(t);
+///		float(xList)[i] = x;
+///		y = func2__(t);
+///		float(yList)[i] = y;
+///		i = i + 1;
+///		t = t + h;
+///	}
+///	
+///	return(i);
+///	
+///}
+///
+//////RK4 방법으로 미분방정식의 해를 출력하는 함수.
+//////Tip1 : 적분함수는 오직 n변수 1계 미분방정식만 해결합니다.
+//////       y''+y=0을 풀기 위해서는 y''=-y로 고친 후 u=y'로 놓은 다음에
+//////       u'자리에 -y를 갖다 놓고 y'자리에는 u를 갖다 놓으면 됩니다.
+//////Tip2 : 최대 4변수까지 허용.
+///
+//////기존 Starlight2에서는 C로 구현했던거를 Starlight로 최초로 완전포팅함.
+//////용량은 12KB 정도로 더럽게 무겁다.
+//////이러다 StarStar 생기겠네 ㅋㅋㅋㅋㅋ
+///
+///$const($eq$ref$ref, 0x01063010, ref, int);
+///$const($ne$ref$ref, 0x010B3010, ref, int);
+///
+///
+///GRAPH_Integrate(func__:ref,
+///				val__:ref,
+///				h:float, 
+///				ti:float, 
+///				te:float, 
+///				lists:ref):int{
+///				
+///	#func1__(int(func__)[0]):ref;
+///	#func2__(int(func__)[1]):ref;
+///	#func3__(int(func__)[2]):ref;
+///	#func4__(int(func__)[3]):ref;
+///	
+///	
+///	#t(float(val__)[0]):float;
+///	#x(float(val__)[1]):float;
+///	#y(float(val__)[2]):float;
+///	#z(float(val__)[3]):float;
+///	#w(float(val__)[4]):float;
+///	#i(int((t - ti) / h)):int;
+///	#ie(int((te - ti) / h)):int;
+///	                          
+///	#tList(int(lists)[0]):ref;
+///	#xList(int(lists)[1]):ref;
+///	#yList(int(lists)[2]):ref;
+///	#zList(int(lists)[3]):ref;
+///	#wList(int(lists)[4]):ref;
+///	
+///				
+///	#m0(0.0):float;
+///	#k0(0.0):float;
+///	#l0(0.0):float;
+///	#n0(0.0):float;
+///	#m1(0.0):float;
+///	#k1(0.0):float;
+///	#l1(0.0):float;
+///	#n1(0.0):float;
+///	#m2(0.0):float;
+///	#k2(0.0):float;
+///	#l2(0.0):float;
+///	#n2(0.0):float;
+///	#m3(0.0):float;
+///	#k3(0.0):float;
+///	#l3(0.0):float;
+///	#n3(0.0):float;
+///	
+///	
+///	float(tList)[i] = t;
+///	if(xList != 0R){
+///		float(xList)[i] = x;
+///	}
+///	if(yList != 0R){
+///		float(yList)[i] = y;
+///	}
+///	if(zList != 0R){
+///		float(zList)[i] = z;
+///	}
+///	if(wList != 0R){
+///		float(wList)[i] = w;
+///	}
+///	
+//////	#increase(1):int;
+///	
+///	
+///	
+///	while(i <= ie){
+///	
+///	///OLED_Clear();
+///	///OLED_cout << i << ":" << t;
+///	///Delay(100);
+///	
+///	///이게 그 유명한 RK4 방법이라고 ㅋㅋㅋㅋ
+///	
+///	
+///	
+///	
+///	if(func1__ != 0R){
+///		m0 = func1__(t, x, y, z, w);
+///	}
+///	if(func2__ != 0R){
+///		k0 = func2__(t, x, y, z, w);
+///	}
+///	if(func3__ != 0R){
+///		l0 = func3__(t, x, y, z, w);
+///	}
+///	if(func4__ != 0R){
+///		n0 = func4__(t, x, y, z, w);
+///	}
+///	
+///	
+///	if(func1__ != 0R){
+///		m1 = func1__(t + 0.5 * h, x + 0.5 * h * m0, y + 0.5 * h * k0, z + 0.5 * h * l0, w + 0.5 * h * n0);
+///	}
+///	if(func2__ != 0R){
+///		k1 = func2__(t + 0.5 * h, x + 0.5 * h * m0, y + 0.5 * h * k0, z + 0.5 * h * l0, w + 0.5 * h * n0);
+///	}
+///	if(func3__ != 0R){
+///		l1 = func3__(t + 0.5 * h, x + 0.5 * h * m0, y + 0.5 * h * k0, z + 0.5 * h * l0, w + 0.5 * h * n0);
+///	}
+///	if(func4__ != 0R){
+///		n1 = func4__(t + 0.5 * h, x + 0.5 * h * m0, y + 0.5 * h * k0, z + 0.5 * h * l0, w + 0.5 * h * n0);
+///	}
+///	
+///	if(func1__ != 0R){
+///		m2 = func1__(t + 0.5 * h, x + 0.5 * h * m1, y + 0.5 * h * k1, z + 0.5 * h * l1, w + 0.5 * h * n1);
+///	}
+///	if(func2__ != 0R){
+///		k2 = func2__(t + 0.5 * h, x + 0.5 * h * m1, y + 0.5 * h * k1, z + 0.5 * h * l1, w + 0.5 * h * n1);
+///	}
+///	if(func3__ != 0R){
+///		l2 = func3__(t + 0.5 * h, x + 0.5 * h * m1, y + 0.5 * h * k1, z + 0.5 * h * l1, w + 0.5 * h * n1);
+///	}
+///	if(func4__ != 0R){
+///		n2 = func4__(t + 0.5 * h, x + 0.5 * h * m1, y + 0.5 * h * k1, z + 0.5 * h * l1, w + 0.5 * h * n1);
+///	}
+///	
+///	if(func1__ != 0R){
+///		m3 = func1__(t + h, x + h * m2, y + h * k2, z + h * l2, w + h * n2);
+///	}
+///	if(func2__ != 0R){
+///		k3 = func2__(t + h, x + h * m2, y + h * k2, z + h * l2, w + h * n2);
+///	}
+///	if(func3__ != 0R){
+///		l3 = func3__(t + h, x + h * m2, y + h * k2, z + h * l2, w + h * n2);
+///	}
+///	if(func4__ != 0R){
+///		n3 = func4__(t + h, x + h * m2, y + h * k2, z + h * l2, w + h * n2);
+///	}
+///	
+///	
+///	x = x + h * (m0 + m3 + (m1 + m2) * 2) / 6;
+///	y = y + h * (k0 + k3 + (k1 + k2) * 2) / 6;
+///	z = z + h * (l0 + l3 + (l1 + l2) * 2) / 6;
+///	w = w + h * (n0 + n3 + (n1 + n2) * 2) / 6;
+///	
+///	i = i + 1;
+///	t = t + h;
+///	                    
+///	float(tList)[i] = t;
+///	if(xList != 0R){
+///		float(xList)[i] = x;
+///	}
+///	if(yList != 0R){
+///		float(yList)[i] = y;
+///	}
+///	if(zList != 0R){
+///		float(zList)[i] = z;
+///	}
+///	if(wList != 0R){
+///		float(wList)[i] = w;
+///	}
+///	
+///	}
+///	
+///	
+///	#reti(i):int;
+///	
+///	t = float(val__)[0];
+///	x = float(val__)[1];
+///	y = float(val__)[2];
+///	z = float(val__)[3];
+///	w = float(val__)[4];
+///	i = int((t - ti) / h);
+///	 
+///	while(i > 0){
+///	
+///	///OLED_Clear();
+///	///OLED_cout << i << ":" << t;
+///	///Delay(100);
+///	
+///	///이게 그 유명한 RK4 방법이라고 ㅋㅋㅋㅋ
+///	
+///	
+///	
+///	
+///	if(func1__ != 0R){
+///		m0 = func1__(t, x, y, z, w);
+///	}
+///	if(func2__ != 0R){
+///		k0 = func2__(t, x, y, z, w);
+///	}
+///	if(func3__ != 0R){
+///		l0 = func3__(t, x, y, z, w);
+///	}
+///	if(func4__ != 0R){
+///		n0 = func4__(t, x, y, z, w);
+///	}
+///	
+///	
+///	if(func1__ != 0R){
+///		m1 = func1__(t - 0.5 * h, x - 0.5 * h * m0, y - 0.5 * h * k0, z - 0.5 * h * l0, w - 0.5 * h * n0);
+///	}
+///	if(func2__ != 0R){
+///		k1 = func2__(t - 0.5 * h, x - 0.5 * h * m0, y - 0.5 * h * k0, z - 0.5 * h * l0, w - 0.5 * h * n0);
+///	}
+///	if(func3__ != 0R){
+///		l1 = func3__(t - 0.5 * h, x - 0.5 * h * m0, y - 0.5 * h * k0, z - 0.5 * h * l0, w - 0.5 * h * n0);
+///	}
+///	if(func4__ != 0R){
+///		n1 = func4__(t - 0.5 * h, x - 0.5 * h * m0, y - 0.5 * h * k0, z - 0.5 * h * l0, w - 0.5 * h * n0);
+///	}
+///	
+///	if(func1__ != 0R){
+///		m2 = func1__(t - 0.5 * h, x - 0.5 * h * m1, y - 0.5 * h * k1, z - 0.5 * h * l1, w - 0.5 * h * n1);
+///	}
+///	if(func2__ != 0R){
+///		k2 = func2__(t - 0.5 * h, x - 0.5 * h * m1, y - 0.5 * h * k1, z - 0.5 * h * l1, w - 0.5 * h * n1);
+///	}
+///	if(func3__ != 0R){
+///		l2 = func3__(t - 0.5 * h, x - 0.5 * h * m1, y - 0.5 * h * k1, z - 0.5 * h * l1, w - 0.5 * h * n1);
+///	}
+///	if(func4__ != 0R){
+///		n2 = func4__(t - 0.5 * h, x - 0.5 * h * m1, y - 0.5 * h * k1, z - 0.5 * h * l1, w - 0.5 * h * n1);
+///	}
+///	
+///	if(func1__ != 0R){
+///		m3 = func1__(t - h, x - h * m2, y - h * k2, z - h * l2, w - h * n2);
+///	}
+///	if(func2__ != 0R){
+///		k3 = func2__(t - h, x - h * m2, y - h * k2, z - h * l2, w - h * n2);
+///	}
+///	if(func3__ != 0R){
+///		l3 = func3__(t - h, x - h * m2, y - h * k2, z - h * l2, w - h * n2);
+///	}
+///	if(func4__ != 0R){
+///		n3 = func4__(t - h, x - h * m2, y - h * k2, z - h * l2, w - h * n2);
+///	}
+///	
+///	
+///	x = x - h * (m0 + m3 + (m1 + m2) * 2) / 6;
+///	y = y - h * (k0 + k3 + (k1 + k2) * 2) / 6;
+///	z = z - h * (l0 + l3 + (l1 + l2) * 2) / 6;
+///	w = w - h * (n0 + n3 + (n1 + n2) * 2) / 6;
+///	
+///	i = i - 1;
+///	t = t - h;
+///	                    
+///	float(tList)[i] = t;
+///	if(xList != 0R){
+///		float(xList)[i] = x;
+///	}
+///	if(yList != 0R){
+///		float(yList)[i] = y;
+///	}
+///	if(zList != 0R){
+///		float(zList)[i] = z;
+///	}
+///	if(wList != 0R){
+///		float(wList)[i] = w;
+///	}
+///	
+///	}
+///	
+///	return(reti);
+///}
+///
+///
+///COMPLEX_Graph(func__:ref, density:float, maxv:float){
+///	#i1(0):int;
+///	#i2(0):int;
+///	#x1(0.00):float;
+///	#y1(0.00):float;
+///	#z1(0.00):complex_t;
+///	#v1(0.00):float;
+///	#hue():int;
+///	#valu():int;
+///	#color1():color_t;
+///	for(i1 = 0, i1 < 96, i1 = i1 + 1){
+///		x1 = float(i1 - 48) * density;
+///		for(i2 = 0, i2 < 64, i2 = i2 + 1){
+///			y1 = float(32 - i2) * density;
+///			///z1 = 2*x1*y1 / (x1 * x1 - y1 * y1) + 0*j;
+///			z1 = func__(complex_t(x1, y1));
+///			v1 = arg(z1);
+///			hue = (int(v1 * 120.00 / PI + 240.00)) % 240; ///이렇게 복잡하게 가는 이유는 스케일링 때문.
+///			v1 = abs(z1);
+///			valu = int(v1 * 255.0 / maxv);
+///			if(valu > 255){
+///				valu = 255;
+///			}			
+///			color1 = color_t(hsv_t(byte(valu), 255S, byte(hue)));
+///			OLED_AddrWindow(i1, i2, 1, 1);
+///			OLED_WriteColor(color1);
+///		}
+///	}
+///}
+///
+///
+///
+///
+///
+///COMPLEX_MapSyn2(func__:ref, func1__:ref, func2__:ref, h:float, xi:float, xe:float, xList:ref, yList:ref):int{
+///	#t():float;
+///	#x():float;
+///	#y():float;
+///	#z():complex_t;
+///	#i(0):int;
+///	
+///	t = xi;
+///	while(t <= xe){
+///		x = func1__(t);
+///		y = func2__(t);
+///		z = complex_t(x,y);
+///		z = func__(z);
+///		
+///		
+///		
+///		float(xList)[i] = z.re;
+///		float(yList)[i] = z.im;
+///		i = i + 1;
+///		t = t + h;
+///	}
+///	
+///	return(i);
+///	
+///}
+///
+///COMPLEX_MapSyn(func__:ref, vh:int, fixed:float, h:float, xi:float, xe:float, xList:ref, yList:ref):int{
+///	#t():float;
+///	#x():float;
+///	#y():float;
+///	#z():complex_t;
+///	#i(0):int;
+///	
+///	t = xi;
+///	while(t <= xe){
+///		if(vh){///horizontal
+///			x = t;
+///			y = fixed;
+///		}
+///		else{///vertical
+///			x = fixed;
+///			y = t;
+///		}
+///		z = complex_t(x, y);
+///		z = func__(z);
+///		
+///		
+///		
+///		float(xList)[i] = z.re;
+///		float(yList)[i] = z.im;
+///		i = i + 1;
+///		t = t + h;
+///	}
+///	
+///	return(i);
+///	
+///}
+///
+///COMPLEX_Map(func__:ref, xi:float, xe:float, yi:float, ye:float, interval:float, density:float){
+///	#xList1():float[512];
+///	#yList1():float[512];
+///	#i():float;
+///	#n():int;
+///	for(i = xi, i <= xe, i = i + interval){
+///		n = COMPLEX_MapSyn(func__, 0, i, density, yi, ye, _xList1, _yList1);
+///		#gs():GSketch_t;
+///		GRAPH_SketchInit(_gs);
+///		GRAPH_Print(_gs, _xList1, _yList1, density, density, 48, 32, n);
+///		GRAPH_Display(_gs, 0xFFFF00);
+///	}
+///	
+///	for(i = yi, i <= ye, i = i + interval){
+///		n = COMPLEX_MapSyn(func__, 1, i, density, xi, xe, _xList1, _yList1);
+///		#gs():GSketch_t;
+///		GRAPH_SketchInit(_gs);
+///		GRAPH_Print(_gs, _xList1, _yList1, density, density, 48, 32, n);
+///		GRAPH_Display(_gs, 0x00FFFF);
+///	}
+///	
+///	
+///}
+///
+///
+///$const(FFT$int$ref$int$int, 0x01000011, ref);
+///$const(FFT_16, 0, int);
+///$const(FFT_32, 1, int);
+///$const(FFT_64, 2, int);
+///$const(FFT_128, 3, int);
+///$const(FFT_256, 4, int);
+///$const(FFT_512, 5, int);
+///$const(FFT_1024, 6, int);
+///$const(FFT_2048, 7, int);
+///$const(FFT_4096, 8, int);
+///
+//////F-domain Fourier Transform
+///COMPLEX_Fourier(func__:ref, fftSize_:int, start_:float, end_:float, xList_:ref, yList_:ref){
+///	///크기를 숫자로 환산한다.
+///	#size(1 << (4+fftSize_)):int;
+///	
+///	
+///	///함숫값 벡터 생성
+///	#x():complex_t[1024];
+///	
+///	#idx(0):int;
+///	#t1(complex_t(0, 0)):complex_t;
+///	#x1(complex_t(0, 0)):complex_t;
+///	#A(end_ - start_):float;
+///	while(idx < size){
+///		t1 = complex_t(start_ + idx * A / size, 0);
+///		x1 = func__(t1);
+///		x1 = A * x1;
+///		x[idx] = x1;
+///		idx = idx + 1;
+///	}
+///	///FFT 변환 취함.
+///	FFT(fftSize_, _x, 0, 1);
+///	///벡터 이동(가운데가 0이 되게 함.)
+///	for(idx = 0, idx < size, idx = idx + 1){
+///		complex_t(yList_)[idx] = x[(idx + size / 2) % size] / size * exp(-j * 2 * PI * idx / A * start_);
+///		float(xList_)[idx] = idx / A - size / (2 * A);
+///	}	
+///}
+///
+//////F-domain Vector Fourier Transform
+///COMPLEX_FourierVect(fftSize_:int, xList_:ref, yList_:ref){
+///	///크기를 숫자로 환산한다.
+///	#size(1 << (4+fftSize_)):int;
+///	
+///	
+///	///함숫값 벡터 생성
+///	#x():complex_t[1024];
+///	
+///	#idx(0):int;
+///	#t1(complex_t(0, 0)):complex_t;
+///	#x1(complex_t(0, 0)):complex_t;
+///	#start_(float(xList_)[0]):float;
+///	#end_(float(xList_)[size - 1]):float;
+///	#A((end_ - start_) * size / (size - 1)):float;
+///	while(idx < size){
+///		x[idx] = A * complex_t(yList_)[idx];
+///		idx = idx + 1;
+///	}
+///	///FFT 변환 취함.
+///	FFT(fftSize_, _x, 0, 1);
+///	///벡터 이동(가운데가 0이 되게 함.)
+///	for(idx = 0, idx < size, idx = idx + 1){
+///		complex_t(yList_)[idx] = x[(idx + size / 2) % size] / size * exp(-j * 2 * PI * idx / A * start_);
+///		float(xList_)[idx] = idx / A - size / (2 * A);
+///	}	
+///}
+///
+///
+//////W-domain Fourier Transform
+///COMPLEX_Fourier_W(func__:ref, fftSize_:int, start_:float, end_:float, xList_:ref, yList_:ref){
+///	///크기를 숫자로 환산한다.
+///	#size(1 << (4+fftSize_)):int;
+///	
+///	
+///	///함숫값 벡터 생성
+///	#x():complex_t[1024];
+///	
+///	#idx(0):int;
+///	#t1(complex_t(0, 0)):complex_t;
+///	#x1(complex_t(0, 0)):complex_t;
+///	#A(end_ - start_):float;
+///	while(idx < size){
+///		t1 = complex_t(start_ + idx * A / size, 0);
+///		x1 = func__(t1);
+///		x1 = A * x1;
+///		x[idx] = x1;
+///		idx = idx + 1;
+///	}
+///	///FFT 변환 취함.
+///	FFT(fftSize_, _x, 0, 1);
+///	///벡터 이동(가운데가 0이 되게 함.)
+///	for(idx = 0, idx < size, idx = idx + 1){
+///		complex_t(yList_)[idx] = x[(idx + size / 2) % size] / size * exp(-j * 2 * PI * idx / A * start_);
+///		float(xList_)[idx] = 2 * PI * (idx / A - size / (2 * A));
+///	}	
+///}
+///
+///COMPLEX_Laplace(func__:ref, start_:float, end_:float, s_:float, xList_:ref, yList_:ref){
+///	///크기를 숫자로 환산한다.
+///	#size(128):int;
+///	
+///	
+///	///함숫값 벡터 생성
+///	#x():complex_t[128];
+///	
+///	#idx(0):int;
+///	#t1(complex_t(0, 0)):complex_t;
+///	#x1(complex_t(0, 0)):complex_t;
+///	#A(end_ - start_):float;
+///	while(idx < 128){
+///		t1 = complex_t(start_ + idx * A / 128, 0);
+///		x1 = func__(t1);
+///		x1 = A * x1 * exp(- s_ * Re(t1));
+///		x[idx] = x1;
+///		idx = idx + 1;
+///	}
+///	///FFT 변환 취함.
+///	FFT(FFT_128, _x, 0, 1);
+///	///벡터 이동(가운데가 0이 되게 함.)
+///	for(idx = 0, idx < 128, idx = idx + 1){
+///		complex_t(yList_)[idx] = x[(idx + 64) % 128] / 128 * exp(-j * 2 * PI * idx / A * start_);
+///		float(xList_)[idx] = 2 * PI * (idx - 64) / A;
+///	}	
+///}
+///
+//////F-domain Inverse Fourier Transform
+//////No 2-Pi Multiplication when F-domain is used
+//////Duality : f(t)->F(f) => F(t)->f(-f)=F{F(t)}
+///COMPLEX_InvFourier(func__:ref, fftSize_:int, start_:float, end_:float, xList_:ref, yList_:ref){
+///	///크기를 숫자로 환산한다.
+///	#size(1 << (4+fftSize_)):int;
+///	
+///	
+///	///함숫값 벡터 생성
+///	#x():complex_t[1024];
+///	
+///	#idx(0):int;
+///	#t1(complex_t(0, 0)):complex_t;
+///	#x1(complex_t(0, 0)):complex_t;
+///	#A(end_ - start_):float;
+///	while(idx < size){
+///		t1 = complex_t(start_ + idx * A / size, 0);
+///		x1 = func__(t1);
+///		x1 = A * x1;
+///		x[idx] = x1;
+///		idx = idx + 1;
+///	}
+///	///FFT 변환 취함.
+///	FFT(fftSize_, _x, 0, 1);
+///	///벡터 이동(가운데가 0이 되게 함.)
+///	for(idx = 0, idx < size, idx = idx + 1){
+///		complex_t(yList_)[size-idx-1] = x[(idx + size / 2) % size] / size * exp(-j * 2 * PI * idx / A * start_);
+///		float(xList_)[idx] = idx / A - size / (2 * A);
+///	}	
+///}
+///
+///
+//////F-domain Vector Fourier Transform
+///COMPLEX_InvFourierVect(fftSize_:int, xList_:ref, yList_:ref){
+///	///크기를 숫자로 환산한다.
+///	#size(1 << (4+fftSize_)):int;
+///	
+///	
+///	///함숫값 벡터 생성
+///	#x():complex_t[1024];
+///	
+///	#idx(0):int;
+///	#t1(complex_t(0, 0)):complex_t;
+///	#x1(complex_t(0, 0)):complex_t;
+///	#start_(float(xList_)[0]):float;
+///	#end_(float(xList_)[size - 1]):float;
+///	#A((end_ - start_) * size / (size - 1)):float;
+///	while(idx < size){
+///		x[idx] = A * complex_t(yList_)[idx];
+///		idx = idx + 1;
+///	}
+///	///FFT 변환 취함.
+///	FFT(fftSize_, _x, 0, 1);
+///	///벡터 이동(가운데가 0이 되게 함.)
+///	for(idx = 0, idx < size, idx = idx + 1){
+///		complex_t(yList_)[size-idx-1] = x[(idx + size / 2) % size] / size * exp(-j * 2 * PI * idx / A * start_);
+///		float(xList_)[idx] = idx / A - size / (2 * A);
+///	}	
+///}
+///
+///
+///COMPLEX_Hilbert(func__:ref, fftSize_:int, start_:float, end_:float, xList_:ref, yList_:ref){
+///	///우선 푸리에 변환을 해준다.
+///	COMPLEX_Fourier(func__, fftSize_, start_, end_, xList_, yList_);
+///	#size(1 << (4+fftSize_)):int;
+///	///H=-jsgn(f) 곱한다.
+///	#idx(0):int;
+///	for(idx = 0, idx<size, idx=idx+1){
+///		if(float(xList_)[idx] >= 0.0){
+///			complex_t(yList_)[idx] = complex_t(yList_)[idx] * (-j);
+///		}
+///		else{
+///			complex_t(yList_)[idx] = complex_t(yList_)[idx] * (j);
+///		}
+///	}
+///	
+///	///역 푸리에 변환을 한다.
+///	
+///	COMPLEX_InvFourierVect(fftSize_, xList_, yList_);
+///}
+///
+//////함숫값으로 구성된 벡터 생성
+///COMPLEX_Vect(func__:ref, fftSize_:int, start_:float, end_:float, xList_:ref, yList_:ref){
+///	#size(1 << (4+fftSize_)):int;
+///	
+///	#idx(0):int;
+///	#t1(complex_t(0, 0)):complex_t;
+///	#x1(complex_t(0, 0)):complex_t;
+///	#A(end_ - start_):float;
+///	while(idx < size){
+///		t1 = complex_t(start_ + idx * A / size, 0);
+///		x1 = func__(t1);///함수를 변수로 쓰는 경우 출력 유형이 불안정하므로 변수에 저장하는 것을 권함.
+///		complex_t(yList_)[idx] = x1;
+///		idx = idx + 1;
+///	}
+///}
+///
+///COMPLEX_SSBModulate(func__:ref, fftSize_:int, start_:float, end_:float, xList_:ref, yList_:ref, ac_:float, ssbcoeff_:float, freq_:float){
+///	COMPLEX_Hilbert(func__, fftSize_, start_, end_, xList_, yList_);
+///	#size(1 << (4+fftSize_)):int;
+///	#idx(0):int;
+///	
+///	#t1(complex_t(0, 0)):complex_t;
+///	#f1(complex_t(0, 0)):complex_t;
+///	for(idx=0, idx<size, idx=idx+1){
+///		t1 = float(xList_)[idx];
+///		f1 = func__(t1);
+///		complex_t(yList_)[idx] = (ac_ / 2) * (f1 * cos(2*PI*freq_*t1) - ssbcoeff_ * complex_t(yList_)[idx] * sin(2*PI*freq_*t1));
+///	}
+///	
+///}
+

@@ -1,0 +1,59 @@
+
+///Sound Play Functions
+
+
+///SOUND_Play(freq, amp, playtime, dampinterval, dampcoeff)
+$const(SOUND_Play$float$int$int$int$float, 0x01410012, ref);
+$const(SOUND_Stop, 0x01411012, ref);
+$const(SOUND_IsPlaying, 0x01412012, ref, int);
+$const(SOUND_PlayTime, 0x01413012, ref, int);
+
+
+///Standard Damp Function
+SOUND_Play(freq:float, amp:int){
+	SOUND_Play(freq, amp, 1000, 50, 0.83);
+}
+
+///Standard No Damp Function
+SOUND_Play(freq:float, amp:int, time:int){
+	SOUND_Play(freq, amp, time, time, 1.0);
+}
+
+///Sound Pitches
+$const(SOUND_LA0, 220.0, float);
+$const(SOUND_LA0S, 233.1, float);
+$const(SOUND_TI0, 246.9, float);
+$const(SOUND_DO1, 261.6, float);
+$const(SOUND_DO1S, 277.2, float);
+$const(SOUND_RE1, 293.7, float);
+$const(SOUND_RE1S, 311.1, float);
+$const(SOUND_MI1, 329.6, float);
+$const(SOUND_FA1, 349.2, float);
+$const(SOUND_FA1S, 370.0, float);
+$const(SOUND_SOL1, 392.0, float);
+$const(SOUND_SOL1S, 415.3, float);
+$const(SOUND_LA1, 440.0, float);
+$const(SOUND_LA1S, 466.2, float);
+$const(SOUND_TI1, 493.9, float);
+$const(SOUND_DO2, 523.3, float);
+$const(SOUND_DO2S, 554.4, float);
+$const(SOUND_RE2, 587.3, float);
+$const(SOUND_RE2S, 622.3, float);
+$const(SOUND_MI2, 659.3, float);
+$const(SOUND_FA2, 698.5, float);
+$const(SOUND_FA2S, 740.0, float);
+$const(SOUND_SOL2, 784.0, float);
+$const(SOUND_SOL2S, 830.6, float);
+$const(SOUND_LA2, 880.0, float);
+$const(SOUND_LA2S, 932.3, float);
+$const(SOUND_TI2, 987.8, float);
+$const(SOUND_DO3, 1046.5, float);
+$const(SOUND_DO3S, 1108.7, float);
+$const(SOUND_RE3, 1174.7, float);
+$const(SOUND_RE3S, 1244.5, float);
+$const(SOUND_MI3, 1318.5, float);
+$const(SOUND_FA3, 1396.9, float);
+$const(SOUND_FA3S, 1480.0, float);
+$const(SOUND_SOL3, 1568.0, float);
+$const(SOUND_SOL3S, 1661.2, float);
+$const(SOUND_LA3, 1760.0, float);
