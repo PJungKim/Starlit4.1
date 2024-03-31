@@ -31,7 +31,7 @@
 - 앞의 [링크](https://www.hdlworks.com/downloads/scriptum_soft.html)를 타고 운영체제에 맞게 설치해 주시면 됩니다.
 
 ### 2.2. xml 파일 패치
-- Scriptum 패치 파일은 2가지 종류가 있습니다.
+- Scriptum 패치 파일은 2가지 종류가 있습니다. Scriptum 폴더에 있는 두 개의 파일을 아래와 같이 패치해 주시면 됩니다.
 - `scriptum.xml`
   - `Program Files` - `HDL Works` - `Scriptum22Rev1` - `scriptum` - `etc` 폴더를 찾으신 다음 `scriptum.xml` 파일을 삭제하신 후 이 파일을 붙여주세요.
   - 변경을 요청하는 창이 뜨면 `허용`을 누르면 됩니다.
