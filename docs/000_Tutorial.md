@@ -2,7 +2,9 @@
 
 ## 1. Starlit 받기
 
-<img src="https://github.com/PJungKim/Starlit3/edit/main/res/GITHUB_CLONE.png" width="30%" height="30%">
+- 우선, GitHub에 들어오셨으면 `Code` - `Clone`에 있는, `복사` 버튼을 눌러 링크를 복사해주세요.
+
+  <img src="../res/GITHUB_Link.png" width="50%" height="50%">
 
 ## 2. Scriptum 받기
 
