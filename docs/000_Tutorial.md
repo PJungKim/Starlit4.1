@@ -31,8 +31,19 @@
 - 앞의 [링크](https://www.hdlworks.com/downloads/scriptum_soft.html)를 타고 운영체제에 맞게 설치해 주시면 됩니다.
 
 ### 2.2. xml 파일 패치
-- C:\Program files\HDL WORKS\
+- Scriptum 패치 파일은 2가지 종류가 있습니다.
+- `scriptum.xml`
+  - `Program Files` - `HDL Works` - `Scriptum22Rev1` - `scriptum` - `etc` 폴더를 찾으신 다음 `scriptum.xml` 파일을 삭제하신 후 이 파일을 붙여주세요.
+  - 변경을 요청하는 창이 뜨면 `허용`을 누르면 됩니다.
+ 
+    <img src="../res/GITHUB_SCRIPTUM_ETC.png" width="40%" height="40%">
 
+- `sr3.xml`
+  - `Program Files` - `HDL Works` - `Scriptum22Rev1` - `scriptum` - `lsf` 폴더를 찾으신 다음 이 파일을 그대로 붙여주세요.(업데이트가 있다면 그 파일을 삭제한 다음 다시 붙이시면 됩니다.)
+  - 변경을 요청하는 창이 뜨면 `허용`을 누르면 됩니다.
+ 
+    <img src="../res/GITHUB_SCRIPTUM_LSF.png" width="40%" height="40%">
+  
 ## 3. 테스트 해보기
 - 처음에 테스트를 위한 예제를 1개 제공합니다.
 
