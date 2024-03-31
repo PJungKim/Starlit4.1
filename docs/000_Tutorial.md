@@ -42,5 +42,30 @@
 
 - 연결 프로그램을 다운받으신 주소의 apps 폴더에 들어간 후 starlight compiler.exe로 설정해 주세요.
 
-- 그 다음, 키보드의 1번을 누르고 Enter를 선택합니다. 자동으로 컴파일하고 실행하면 정상입니다.
-(현재 Windows 11에서는 실행이 되지 않는 것으로 파악됩니다.)
+  - 우선 연결 프로그램에 있는 `변경`을 누릅니다.
+
+    <img src="../res/GITHUB_SETUP_SLC2.png" width="40%" height="40%">
+
+  - 그 다음, 더 보기를 눌러서 맨 아래로 내려간 다음 `이 PC에서 다른 앱 찾기`를 선택해주세요.
+
+    <img src="../res/GITHUB_SETUP_SLC3.png" width="40%" height="40%">
+ 
+  - Starlit 설치 폴더에 들어가서 `apps`에 있는 `Starlight Compiler.exe`를 선택합니다.
+
+    <img src="../res/GITHUB_SETUP_SLC4.png" width="40%" height="40%">
+
+  - 선택했으면 `적용`을 선택한 후 `확인`을 눌러주세요. 아래 그림과 같이 Starlit 로고로 바뀌면 됩니다. 이제, 이 파일을 더블클릭해서 실행합니다.
+ 
+    <img src="../res/GITHUB_SETUP_SLC5.png" width="40%" height="40%">
+
+- 그 다음, 키보드의 1번을 누르고 Enter를 선택합니다.
+
+  <img src="../res/GITHUB_SETUP_SLC6.png" width="40%" height="40%">
+
+- 컴파일이 진행되고, SVM이 실행됩니다. 예제 파일인 경우 흰색 글자로 조그만한 글자로 `Hello, World!`가 출력되면 됩니다.
+
+  <img src="../res/GITHUB_SETUP_SLC7.png" width="40%" height="40%">
+
+## 4. 여담
+
+- 현재 Windows 11에서는 실행이 되지 않는 것으로 파악됩니다. ~~Windows 11은 Pspice도 안돌아간다고 하니 참 골때리긴 합니다...~~
