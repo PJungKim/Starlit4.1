@@ -34,8 +34,11 @@
 - C:\Program files\HDL WORKS\
 
 ## 3. 테스트 해보기
-- 처음에 테스트를 위한 예제를 1개 제공합니다. 
+- 처음에 테스트를 위한 예제를 1개 제공합니다.
+
 - Examples 폴더의 Hello_world 폴더에 들어가신 후 Hello.slc 파일을 우클릭하신 후 속성에 들어갑니다.
+
+  <img src="../res/GITHUB_SETUP_SLC1.png" width="40%" height="40%">
 
 - 연결 프로그램을 다운받으신 주소의 apps 폴더에 들어간 후 starlight compiler.exe로 설정해 주세요.
 
