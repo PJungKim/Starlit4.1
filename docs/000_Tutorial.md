@@ -2,7 +2,7 @@
 
 ## 1. Starlit 받기
 
-<img src="https://github.com/PJungKim/Starlit3/edit/main/docs/GITHUB_CLONE.png" width="30%" height="30%">
+<img src="https://github.com/PJungKim/Starlit3/edit/main/res/GITHUB_CLONE.png" width="30%" height="30%">
 
 ## 2. Scriptum 받기
 
