@@ -28,6 +28,36 @@
 
   <img src = "..\res\GITHUB_NEWFILE5.png" width = "40%" height = "40%">
 
+## 2. 코드 작성하기
+
+### 2.1. 코드 작성
+
+- 이제 코드를 작성할 차례입니다. 아래와 같이 완벽하게 똑같이 작성해 주시면 됩니다.
+
+```
+$import(oled);
+
+main(){
+    #OLED():OLED_t;
+    OLED.Init();
+    OLED << "Hello, World!\n";
+    while(!BUTTON_Read()){}
+}
+```
+
+### 2.2. 코드 실행
+
+- 다시 Starlit 창에 들어가서 1번을 누른 뒤 Enter를 눌러 실행합니다. 아래 그림처럼 출력되면 정상입니다.
+
+  <img src = "..\res\GITHUB_SETUP_SLC7.png" width = "40%" height = "40%">
+
+### 2.3. 코드 해설
+
+## 3. AResult.sbc
+
+- sbc는 Starlit Binary Code의 약자로, 컴파일을 하면 이 파일이 생성되며, 가상 머신인 SVM에서 돌아갑니다.
+- 이 파일도 앞에서의 방법처럼 연결 프로그램을 StarSVM.exe로 설정하시면 바로 작성한 코드를 실행할 수 있습니다.
+  
   
   
 
