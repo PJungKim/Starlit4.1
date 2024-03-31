@@ -2,9 +2,24 @@
 
 ## 1. Starlit 받기
 
+### 1.1. Starlit 링크 복사하기
+
 - 우선, GitHub에 들어오셨으면 `Code` - `Clone`에 있는, `복사` 버튼을 눌러 링크를 복사해주세요.
+- 이 페이지에 들어오셨다면 Starlit3 홈으로 가셔서 연두색 `code`를 눌러 주시면 됩니다.
 
   <img src="../res/GITHUB_Link.png" width="50%" height="50%">
+
+### 1.2. 레포지토리 당겨오기
+
+- GitHub Desktop에 들어가셔서 `File` - `Clone Repository`를 선택해 주세요.
+  <img src="../res/GITHUB_CLONE_MENU.png">
+  
+- 그 다음에 `URL`을 선택하셔서 복사한 링크를 붙인 다음, `Choose`를 선택하셔서 Starlit을 설치할 위치를 선택해 주세요.
+  - *주의 : 주소에는 `_`를 제외한 모든 특수문자, 한글, 띄어쓰기 등이 없어야 합니다.*
+
+- 그런 다음에 `Clone`을 선택하시면 Starlit 설치가 완료됩니다.
+  <img src="../res/GITHUB_CLONE.png">
+
 
 ## 2. Scriptum 받기
 
