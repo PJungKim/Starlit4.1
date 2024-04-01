@@ -1,4 +1,4 @@
-# Tutorials
+# 0. Tutorials
 
 이전 [다음](https://github.com/PJungKim/Starlit3/blob/main/docs/001_Hello_World.md)
 
