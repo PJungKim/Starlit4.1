@@ -64,4 +64,23 @@ main(){
 
   <img src = "..\res\EXAMPLE\Variable\Var1R.png" width="20%" height="20%">
   
+### 1.3. 변수 값에 입력받기
 
+이번에는 사용자가 변수에 값을 입력하는 예제입니다. OLED 쪽으로 화살표를 치면 OLED에 출력된다는 뜻이었습니다. 반대로, OLED에서 변수로 화살표를 그리면 어떻게 될까요? 지금 한번 알아보겠습니다. 아래와 같이 코드를 작성해 보겠습니다. `OLED >> a`가 바로 OLED에 a를 입력받겠다는 뜻입니다.
+
+```
+$import(oled);
+main(){
+    #OLED():OLED_t;
+    OLED.Init();
+    #a():int;
+    OLED >> a;
+    OLED << "/1/ra는 /y%d/r입니다." % a;
+    while(!BUTTON_Read()){}
+}
+```
+
+  <img src = "..\res\EXAMPLE\Variable\Var1I.png" width="20%" height="20%">
+
+
+  
