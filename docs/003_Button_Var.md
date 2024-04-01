@@ -44,5 +44,24 @@ main(){
 
   <img src = "..\res\EXAMPLE\Variable\Var1.png" width="20%" height="20%">
 
+### 1.2. 변수 값에 색을 입혀서 출력하고 싶다고요?
+
+이번에는 변수 값에 색을 입혀 보겠습니다. OLED에 색을 입히는 것은 2장에서 설명해 드렸는데요, 이를테면 빨간색으로 변수 a의 값을 출력해 보겠습니다. 빨간색을 나타내는 `"/r"`과 변수 a값을 합치면 됩니다. 하지만, 변수 a는 문자열이 아니기 때문에 문자열 형식으로 만들 수 있습니다. C언어에서 `%d` 생각 나시죠? 그러면 `"/r%d"`라고 쓰고 %d 위치에 a를 넣으시면 됩니다. 다음과 같이 작성해 주시면 됩니다.
+
+`"/r%d" % a`
+
+```
+$import(oled);
+main(){
+    #OLED():OLED_t;
+    #a():int;
+    a = 1;
+    OLED.Init();
+    OLED << "/r%d" % a;
+    while(!BUTTON_Read()){}
+}
+```
+
+  <img src = "..\res\EXAMPLE\Variable\Var1R.png" width="20%" height="20%">
   
 
