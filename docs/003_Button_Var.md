@@ -80,7 +80,7 @@ main(){
 }
 ```
 
-  <img src = "..\res\EXAMPLE\Variable\Var1I.png" width="20%" height="20%">
+  <img src = "..\res\EXAMPLE\Variable\VAR1I.png" width="20%" height="20%">
 
 
   
