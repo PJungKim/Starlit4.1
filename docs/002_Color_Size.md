@@ -1,6 +1,6 @@
 # 글자색, 글자크기 등 정하기
 
-[이전](https://github.com/PJungKim/Starlit3/blob/main/docs/001_Hello_World.md) 다음
+[이전](https://github.com/PJungKim/Starlit3/blob/main/docs/001_Hello_World.md) [다음](https://github.com/PJungKim/Starlit3/blob/main/docs/003_Button_Var.md)
 
 ## 1. 글자색 정하기
 
