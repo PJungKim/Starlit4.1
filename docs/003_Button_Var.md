@@ -1,4 +1,4 @@
-# 변수 및 버튼 사용하기
+# 3. 변수 및 버튼 사용하기
 
 [이전](https://github.com/PJungKim/Starlit3/blob/main/docs/002_Color_Size.md) 다음
 
