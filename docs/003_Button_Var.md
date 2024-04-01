@@ -1,4 +1,4 @@
-# 3. 변수 및 버튼 사용하기
+# 3. 변수 사용하기
 
 [이전](https://github.com/PJungKim/Starlit3/blob/main/docs/002_Color_Size.md) 다음
 
@@ -83,6 +83,58 @@ main(){
 ```
 
   <img src = "..\res\EXAMPLE\Variable\VAR1I.png" width="20%" height="20%">
+
+### 1.4. 예제 - 변수 2개를 받아 합 출력하기
+
+이번에는 변수 2개(a, b)를 받아 두 수의 합을 출력하는 코드를 만들어 보겠습니다.
+```
+$import(oled);
+main(){
+    #OLED():OLED_t;
+    OLED.Init();
+    #a():int;
+    #b():int;
+    OLED << "/0a = " >> a;
+    OLED << "/1b = " >> b;
+    OLED << "/2/r%d/w + /r%d/w = /r%d/w입니다." % a % b % (a + b);
+    while(!BUTTON_Read()){}
+}
+```
+
+  <img src = "..\res\EXAMPLE\Variable\Var2P.png" width="20%" height="20%">
+
+## 2. 버튼 사용하기(키보드) - 조건문 뒤쪽에 놓겠습니다.
+
+### 2.1. 버튼 배치표
+
+- 이번에는 버튼을 사용하는 방법을 알아보겠습니다. 우선, 아래와 같이 버튼이 배정되어 있습니다. Starlit은 임베디드용 프로그래밍 언어기 때문에 SVM 상에서 모든 키보드에 대해서 할당되는 것이 아닌 임베디드에 대해서 버튼이 할당되오니 유의해 주시기 바랍니다. 일반적으로 우측에 숫자 키가 따로 있다면, 그 숫자키를 적극적으로 이용하면 편합니다.
+
+  |키보드|버튼 값|
+  |------|-------|
+  |숫자 1|BUTTON_1|
+  |숫자 2|BUTTON_2|
+  |숫자 3|BUTTON_3|
+  |숫자 4|BUTTON_4|
+  |숫자 5|BUTTON_5|
+  |숫자 6|BUTTON_6|
+  |숫자 7|BUTTON_7|
+  |숫자 8|BUTTON_8|
+  |숫자 9|BUTTON_9|
+  |숫자 0|BUTTON_0|
+
+### 2.2. 버튼 입력값에 따라 원하는 내용 출력하기
+
+- 이번에는 버튼을 입력받으면 입력된 값에 따라 원하는 값을 출력해 보겠습니다.
+
+```
+$import(oled);
+main(){
+    #OLED():OLED_t;
+    OLED.Init();
+    OLED << "/01번 또는 2번 입력" % a;
+    while(!BUTTON_Read()){}
+}
+```
 
 
   
