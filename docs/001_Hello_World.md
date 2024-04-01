@@ -1,6 +1,6 @@
 # Hello, World 출력하기
 
-이전 [다음](https://github.com/PJungKim/Starlit3/blob/main/docs/002_Color_Size.md)
+[이전](https://github.com/PJungKim/Starlit3/blob/main/docs/000_Tutorial.md) [다음](https://github.com/PJungKim/Starlit3/blob/main/docs/002_Color_Size.md)
 
 ## 1. 파일 만들고 열기
 
