@@ -1,5 +1,7 @@
 # 글자색, 글자크기 등 정하기
 
+[이전](https://github.com/PJungKim/Starlit3/blob/main/docs/001_Hello_World.md) 다음
+
 ## 1. 글자색 정하기
 
 ### 1.1. 글자색 출력 예제(Hello, World! 변형)
