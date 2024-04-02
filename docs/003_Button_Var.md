@@ -1,6 +1,6 @@
 # 3. 변수 사용하기
 
-[이전](https://github.com/PJungKim/Starlit3/blob/main/docs/002_Color_Size.md) 다음
+[이전](https://github.com/PJungKim/Starlit3/blob/main/docs/002_Color_Size.md) [다음](https://github.com/PJungKim/Starlit3/blob/main/docs%2F004_condition.md)
 
 ## 1. Starlit에서 변수 정의하기(선언)
 
