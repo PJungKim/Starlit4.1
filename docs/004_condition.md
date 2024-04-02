@@ -19,6 +19,7 @@ main(){
         a = 100 / a;
     }
     OLED << "출력 : %d" % a << OLED_endl;
+    while(!BUTTON_Read()){}
 }
 ```
 
@@ -63,3 +64,27 @@ else{
 조건 1이 참이면 조건 2에 상관없이 코드 1만 실행되고, 코드 2~3은 모두 건너뜁니다.
 조건 1이 거짓이고 조건 2가 참이면 코드 1은 건너뛰고 코드 2만 실행된 후 코드 3은 건너뜁니다.
 조건 1, 2가 모두 거짓이면 코드 1,2를 모두 건너뛰고 코드 3이 실행됩니다.
+
+### 2.1. 예제 1
+
+- `1`을 입력하면 `Hello`를, `2`를 입력하면 `World`를 출력하겠습니다. 그 외의 버튼을 누르면 `Starlit`을 출력하겠습니다.
+
+```
+$import(oled);
+main(){
+    #OLED():OLED_t;
+    OLED.Init();
+    #a():int;
+    "입력 : " >> OLED >> a << OLED_endl;
+    if(a == 1){
+        OLED << "Hello" << OLED_endl;
+    }
+    elif(a == 2){
+        OLED << "World" << OLED_endl;
+    }
+    else{
+        OLED << "Starlit" << OLED_endl;
+    }
+    while(!BUTTON_Read()){}
+}
+```
