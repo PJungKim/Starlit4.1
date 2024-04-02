@@ -6,22 +6,22 @@
 
 값을 입력받았을때, 100을 그 값으로 나눈 값을 출력해 볼텐데요, 당연히 입력받은 값이 0이 아닐때만 나눠야 합니다. 그래서 아래처럼 작성해 보겠습니다.
 
-```
-$import(oled);
-
-main(){
-    #OLED():OLED_t;
-    OLED.Init();
-    
-    #a():int;
-    "입력 : " >> OLED >> a << OLED_endl;
-    if(a != 0){///a가 0이 아닐 때
-        a = 100 / a;
-    }
-    OLED << "출력 : %d" % a << OLED_endl;
-    while(!BUTTON_Read()){}
-}
-```
+  ```
+  $import(oled);
+  
+  main(){
+      #OLED():OLED_t;
+      OLED.Init();
+      
+      #a():int;
+      "입력 : " >> OLED >> a << OLED_endl;
+      if(a != 0){///a가 0이 아닐 때
+          a = 100 / a;
+      }
+      OLED << "출력 : %d" % a << OLED_endl;
+      while(!BUTTON_Read()){}
+  }
+  ```
 
 ### 1.1. 핵심 표현
 ```
@@ -69,22 +69,22 @@ else{
 
 - `1`을 입력하면 `Hello`를, `2`를 입력하면 `World`를 출력하겠습니다. 그 외의 버튼을 누르면 `Starlit`을 출력하겠습니다.
 
-```
-$import(oled);
-main(){
-    #OLED():OLED_t;
-    OLED.Init();
-    #a():int;
-    "입력 : " >> OLED >> a << OLED_endl;
-    if(a == 1){
-        OLED << "Hello" << OLED_endl;
-    }
-    elif(a == 2){
-        OLED << "World" << OLED_endl;
-    }
-    else{
-        OLED << "Starlit" << OLED_endl;
-    }
-    while(!BUTTON_Read()){}
-}
-```
+  ```
+  $import(oled);
+  main(){
+      #OLED():OLED_t;
+      OLED.Init();
+      #a():int;
+      "입력 : " >> OLED >> a << OLED_endl;
+      if(a == 1){
+          OLED << "Hello" << OLED_endl;
+      }
+      elif(a == 2){
+          OLED << "World" << OLED_endl;
+      }
+      else{
+          OLED << "Starlit" << OLED_endl;
+      }
+      while(!BUTTON_Read()){}
+  }
+  ```
