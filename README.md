@@ -22,5 +22,5 @@
 
 ### 2024. 04
 
-- 2024. 04. 01 Starlit Release
-- 2024. 04. 04 Fixed Windows11 API Issue(Virtual Machine Only)
+- 01 Starlit Release
+- 04 Fixed Windows11 API Issue(Virtual Machine Only)
