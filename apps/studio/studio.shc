@@ -614,16 +614,20 @@ $const(FA_OPEN_APPEND, 0x30, int);
 $const(F_Open$ref$ref$int, 0x01502012, ref, int);
 $const(F_Close$ref, 0x01503012, ref, int);
 $const(F_Putc$int$ref, 0x0150A012, ref, int);
-$const(F_Gets$ref$int$ref, 0x0150C012, ref, int);
+$const(F_Read$ref$ref$int$ref, 0x01504012, ref, int);
 ##SDFile(F_GetFP());
 $const(F_GetFP, 0x0150E012, ref, ref);
 
 F_Getc(fp:ref):int{
-	#result():int;
+    ///OLED << "read:";
+	#result(0):int;
 	#err():int;
-	err = F_Gets(_result, 1, fp);
+	#br():int;
+	
+	err = F_Read(fp, _result, 1, _br);
 	result &= 0xFF;
-	if(err){
+	///OLED << "%c" % result;
+	if(!br){
 		return(-1);
 	}
 	return(result);
