@@ -71,10 +71,43 @@ $const($exp$float$float,	0x0101C010,		ref,	float	);
 $const($div$int$int,		0x01020010,		ref,	int		);
 $const($div$int64$int64,	0x01021010,		ref,	int64	);
 $const($div$float$float,	0x01022010,		ref,	float	);
+$div2(a:int, b:int):int{
+    if(a < 0 && a %% b){
+        return(a / b - 1);
+    }
+    else{
+        return(a / b);
+    }
+}
+
+$div2(a:int64, b:int64):int64{
+    if(a < 0 && a %% b){
+        return(a / b - 1);
+    }
+    else{
+        return(a / b);
+    }
+}
+
 
 ///Modular
 $const($mod$int$int,		0x01025010,		ref,	int		);
 $const($mod$int64$int64,	0x01026010,		ref,	int64	);
+$mod2(a:int, b:int):int{
+    result = a % b;
+    if(result < 0){
+        result += b;
+    }
+    return(result);
+}
+
+$mod2(a:int64, b:int64):int64{
+    result = a % b;
+    if(result < 0){
+        result += b;
+    }
+    return(result);
+}
 
 ///Addition
 $const($add$int$int,		0x01030010,		ref,	int		);
@@ -111,12 +144,12 @@ $const($be$int$int,			0x010D0010,		ref,	int		);
 $const($be$int64$int64,		0x010D1010,		ref,	int		);
 $const($be$float$float,		0x010D2010,		ref,	int		);
 
-$const($eq$int$int,			0x01063010,		ref,	int		);
-$const($eq$int64$int64,		0x01064010,		ref,	int64	);
-$const($eq$float$float,		0x01065010,		ref,	float	);
-$const($ne$int$int,			0x010B3010,		ref,	int		);
-$const($ne$int64$int64,		0x010B4010,		ref,	int64	);
-$const($ne$float$float,		0x010B5010,		ref,	float	);
+$const($eq$int$int,			0x01063010,		ref,	int	);
+$const($eq$int64$int64,		0x01064010,		ref,	int	);
+$const($eq$float$float,		0x01065010,		ref,	int	);
+$const($ne$int$int,			0x010B3010,		ref,	int	);
+$const($ne$int64$int64,		0x010B4010,		ref,	int	);
+$const($ne$float$float,		0x010B5010,		ref,	int	);
 
 ///Bitwise Operators
 $const($band$int$int,		0x01070010,		ref,	int		);

@@ -14,9 +14,7 @@ $import(oled);
 
 main(){
     ///Define object OLED.
-    #OLED():OLED_t;
-    ///Initialize the OLED object.
-    OLED.Init();
+    OLED = OLED_Black();
     ///Print "Hello, World!" to the OLED object.
     OLED << "Hello, World!" << OLED_endl;
     ///Wait for pressing any button.

@@ -10,7 +10,7 @@ $import(math);
 
 ///Gauge Class
 $class(gauge_t){
-	#oled:OLED_t;
+	#oled:_OLED_t;
 	#centerX:float;
 	#centerY:float;
 	#isNotHalf:int;
@@ -19,28 +19,19 @@ $class(gauge_t){
 	#maxVal:float;
 	#curVal__:float;
 	
-	Init(x:int, y:int, w:int, h:int, maximum:float){
-		self.oled.Init(x, y, w, h);
-		self.centerX = float(w) / 2;
-		self.centerY = float(h) / 2;
+	Init(OLED:_OLED_t, maximum:float){
+		self.oled_ = OLED_;
+		self.centerX = self.oled.width / 2;
+		self.centerY = self.oled.height / 2;
 		self.isNotHalf = 1;
-		self.length = w / 4;
+		self.length = self.oled.width / 4;
 		self.maxVal = maximum;
 	}
-	
-	InitWhite(x:int, y:int, w:int, h:int, maximum:float){
-		self.oled.Init(x, y, w, h, 0xFFFFFF, 0x000001);
-		self.centerX = float(w) / 2;
-		self.centerY = float(h) / 2;
-		self.isNotHalf = 1;
-		self.length = w / 4;
-		self.maxVal = maximum;
-	}
-	
-	Init(x:int, y:int, w:int, h:int, len:float, maximum:float){
-		self.oled.Init(x, y, w, h);
-		self.centerX = float(w) / 2;
-		self.centerY = float(h) / 2;
+		
+	Init(OLED:_OLED_t, len:float, maximum:float){
+		self.oled_ = OLED_;
+		self.centerX = self.oled.width / 2;
+		self.centerY = self.oled.height / 2;
 		self.isNotHalf = 1;
 		self.length = len;
 		self.maxVal = maximum;
@@ -64,7 +55,7 @@ $class(gauge_t){
 		self.PrintGrid(self.length + 2, len, num) color(col);
 	}
 	
-	PrintValue(value:float)color(col:int){
+	Print(value:float)color(col:int){
 		#d():float;
 		///First, Erase the previous line.
 		d = PI * (self.isNotHalf + 1) * self.curVal__ / self.maxVal;
@@ -77,3 +68,20 @@ $class(gauge_t){
 	}
 }
 
+GAUGE(OLED:_OLED_t, len:float, maximum:float):gauge_t{
+    #gauge():gauge_t;
+    gauge.Init(OLED, len, maximum);
+    return(gauge);
+}
+
+GAUGE(OLED:_OLED_t, center:complex_t, len:float, maximum:float):gauge_t{
+    #gauge():gauge_t;
+    gauge.oled_ = OLED_;
+    gauge.centerX = center.re;
+    gauge.centerY = center.im;
+    gauge.isNotHalf = 1;
+    gauge.length = len;
+    gauge.maxVal = maximum;
+    gauge.curVal__ = 0.0;
+    return(gauge);
+}

@@ -81,6 +81,14 @@ $mod(st:str, v:complex_t):str{
     return(s);
 }
 
+$eq(z1:complex_t, z2:complex_t){
+    return(z1.re == z2.re && z1.im == z2.im);
+}
+
+$ne(z1:complex_t, z2:complex_t){
+    return(z1.re != z2.re || z1.im != z2.im);
+}
+
 
 ///켤레복소수(Complex Conjugate)
 conj(z1:complex_t):complex_t{

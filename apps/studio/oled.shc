@@ -14,16 +14,13 @@ $const(OLED_WriteColor$color_t, 0x00018012, ref);
 $const(OLED_SetWindow$int$int$int$int$int, 0x00E05012, ref);
 $const(OLED_GetWindow$ref$ref$ref$ref$ref, 0x00E04012, ref);
 $const(OLED_GetCursor1$ref$ref, 0x00E06012, ref);
+$const(OLED_SetRotate$int, 0x00022012, ref);
+$const(OLED_GetRotate, 0x00023012, ref, int);
 
-OLED_GetCursor(x_:int, y_:int){
+OLED_GetCursor(x:_int, y:_int){
 	OLED_GetCursor1(x_, y_);
 }
 $const(OLED_SetCursor$int$int, 0x00E07012, ref);
-
-$class(OLED_cout_t){
-	#cursorX:ref;
-	#cursorY:ref;
-}
 
 $class(OLED_t){
 	#offX:int;
@@ -34,7 +31,7 @@ $class(OLED_t){
 	#bgColor:int;
 	#cursorX:int;
 	#cursorY:int;
-	///#cout:OLED_cout_t;
+	#rotate:int;
 	
 	Init(){
 		self.offX = 0;
@@ -45,9 +42,11 @@ $class(OLED_t){
 		self.bgColor = 0x000000;
 		self.cursorX = 1;
 		self.cursorY = 1;
+		self.rotate = 0;
 		///self.cout.cursorX = _(self.cursorX);
 		///self.cout.cursorY = _(self.cursorY);
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_Color(0, 95, 0, 63, self.bgColor);
 		OLED_cout << "/0";
 	}
@@ -62,9 +61,11 @@ $class(OLED_t){
 		self.bgColor = 0x000000;
 		self.cursorX = 1;
 		self.cursorY = 1;
+		self.rotate = 0;
 		///self.cout.cursorX = _(self.cursorX);
 		///self.cout.cursorY = _(self.cursorY);
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, dot);
+		OLED_SetRotate(self.rotate);
 		OLED_Color(0, 95, 0, 63, self.bgColor);
 		OLED_cout << "/0";
 	}
@@ -79,9 +80,11 @@ $class(OLED_t){
 		self.bgColor = 0xFFFFFF;
 		self.cursorX = 1;
 		self.cursorY = 1;
+		self.rotate = 0;
 ///		self.cout.cursorX = _(self.cursorX);
 ///		self.cout.cursorY = _(self.cursorY);
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_Color(0, 95, 0, 63, self.bgColor);
 		OLED_cout << "/0";
 	}
@@ -95,9 +98,11 @@ $class(OLED_t){
 		self.bgColor = c;
 		self.cursorX = 1;
 		self.cursorY = 1;
+		self.rotate = 0;
 ///		self.cout.cursorX = _(self.cursorX);
 ///		self.cout.cursorY = _(self.cursorY);
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_Color(0, 95, 0, 63, self.bgColor);
 		OLED_cout << "/0";
 	}
@@ -111,14 +116,20 @@ $class(OLED_t){
 		self.bgColor = 0x000000;
 		self.cursorX = 1;
 		self.cursorY = 1;
+		self.rotate = 0;
 ///		self.cout.cursorX = _(self.cursorX);
 ///		self.cout.cursorY = _(self.cursorY);
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_Color(0, w - 1, 0, h - 1, self.bgColor);
 		OLED_cout << "/0";
 	}
 	
 	Init(x:int, y:int, w:int, h:int, c:int, fc:int){
+	    self.Init(x, y, w, h, c, fc, rot);
+	}
+	
+	Init(x:int, y:int, w:int, h:int, c:int, fc:int, rot:int){
 		self.offX = x;
 		self.offY = y;
 		self.width = w;
@@ -127,15 +138,18 @@ $class(OLED_t){
 		self.bgColor = c;
 		self.cursorX = 1;
 		self.cursorY = 1;
+		self.rotate = rot;
 ///		self.cout.cursorX = _(self.cursorX);
 ///		self.cout.cursorY = _(self.cursorY);
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_Color(0, w - 1, 0, h - 1, self.bgColor);
 		OLED_cout << "/0";
 	}
 	
 	Print(st:ref){
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 ///		OLED_SetCursor(int(self.cout.cursorX), int(self.cout.cursorY));
 		OLED_SetCursor(self.cursorX, self.cursorY);
 		OLED_cout << "/#%06x" % self.fontColor + "$#%06x" % self.bgColor + st;
@@ -156,27 +170,32 @@ $class(OLED_t){
 	
 	Line(x:int, y:int, xe:int, ye:int, col:int){
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_Line(x, xe, y, ye, col);
 	}
 	
 	GLine(x:int, y:int, xe:int, ye:int, col:int){
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_GLine(x, xe, y, ye, col);
 	}
 	
 	Rectangle(x:int, y:int, xe:int, ye:int, outlinecol:int, fillcol:int){
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_Rect(x, xe, y, ye, outlinecol, fillcol);
 	}
 	
 	Pixel(x:int, y:int, col:int){
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_AddrWindow(x, y, 1, 1);
 		OLED_WriteColor(col);
 	}
 	
 	Color(x:int, y:int, xe:int, ye:int, col:int){
 	    OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_Color(x, xe, y, ye, col);
 	}
 	
@@ -184,77 +203,126 @@ $class(OLED_t){
 	
 	Clear(){
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
 		OLED_Color(0, self.width-1, 0, self.height-1, self.bgColor);
 		OLED_cout << "/0";
 		self.cursorX = 1;
 		self.cursorY = 1;
 	}
-	
-	
-	
-	
+}
+
+OLED_Black(x:int, y:int, w:int, h:int):OLED_t{
+    #oled():OLED_t;
+    oled.Init(x, y, w, h);
+    return(oled);
+}
+
+OLED_Black():OLED_t{
+    return(OLED_Black(0, 0, 96, 64));
+}
+
+OLED_Black90(x:int, y:int, w:int, h:int):OLED_t{
+    #oled():OLED_t;
+    oled.Init(x, y, w, h, 0x000000, 0xFFFFFF, 1);
+    return(oled);
+}
+
+OLED_Black90():OLED_t{
+    return(OLED_Black90(0, 0, 64, 96));
+}
+
+OLED_White(x:int, y:int, w:int, h:int):OLED_t{
+    #oled():OLED_t;
+    oled.Init(x, y, w, h, 0xFFFFFF, 0x000001);
+    return(oled);
+}
+
+OLED_White():OLED_t{
+    return(OLED_White(0, 0, 96, 64));
+}
+
+OLED_White90(x:int, y:int, w:int, h:int):OLED_t{
+    #oled():OLED_t;
+    oled.Init(x, y, w, h, 0xFFFFFF, 0x000001, 1);
+    oled.rotate = 1;
+    return(oled);
+}
+
+OLED_White90():OLED_t{
+    return(OLED_White90(0, 0, 64, 96));
+}
+
+OLED(x:int, y:int, w:int, h:int, c:int, fc:int):OLED_t{
+    #oled():OLED_t;
+    oled.Init(x, y, w, h, c, fc);
+    return(oled);
+}
+
+OLED(x:int, y:int, w:int, h:int, c:int, fc:int, r:int):OLED_t{
+    #oled():OLED_t;
+    oled.Init(x, y, w, h, c, fc, r);
+    return(oled);
+}
+
+OLED90(x:int, y:int, w:int, h:int, c:int, fc:int):OLED_t{
+    #oled():OLED_t;
+    oled.Init(x, y, w, h, c, fc);
+    oled.rotate = 1;
+    return(oled);
 }
 
 
 
-$shr(st:ref, sf_:OLED_t):_OLED_t{
+$shr(st:ref, sf:_OLED_t):_OLED_t{
 	sf.Print(st);
 	return(sf_);
 }
 
-$shr(st:str, sf_:OLED_t):_OLED_t{
+$shr(st:str, sf:_OLED_t):_OLED_t{
 	sf.Print(_st);
 	return(sf_);
 }
 
-$shr(v:int, sf_:OLED_t):_OLED_t{
+$shr(v:int, sf:_OLED_t):_OLED_t{
 	sf.Print("%d" % v);
 	return(sf_);
 }
 
-$shr(v:float, sf_:OLED_t):_OLED_t{
+$shr(v:float, sf:_OLED_t):_OLED_t{
 	sf.Print("%.2f" % v);
 	return(sf_);
 }
 
-$shl(sf_:OLED_t, st:ref):_OLED_t{
+$shl(sf:_OLED_t, st:ref):_OLED_t{
 	sf.Print(st);
 	return(sf_);
 }
 
-$shl(sf_:OLED_t, st:str):_OLED_t{
+$shl(sf:_OLED_t, st:str):_OLED_t{
 	sf.Print(_st);
 	return(sf_);
 }
 
-$shl(sf_:OLED_t, v:int):_OLED_t{
+$shl(sf:_OLED_t, v:int):_OLED_t{
 	sf.Print("%d" % v);
 	return(sf_);
 }
 
-$shl(sf_:OLED_t, v:float):_OLED_t{
+$shl(sf:_OLED_t, v:float):_OLED_t{
 	sf.Print("%.2f" % v);
 	return(sf_);
 }
 
-///$if(definedC(complex_t)){
-
-///$shl(sf_:OLED_t, v:complex_t):_OLED_t{
-///    sf.Print("%.2++.2j" % v);
-///    return(sf_);
-///}
-
-///}
 
 
 ///OLED 분할 시 기본적으로 정수와 소수만 입력합니다.
-$shl(v_:int, sf_:OLED_t):_OLED_t{
+$shl(v:_int, sf:_OLED_t):_OLED_t{
 	return(_(sf >> v));
 }
 
 
 
-$shr(sf_:OLED_t, v_:int):_OLED_t{
+$shr(sf:_OLED_t, v:_int):_OLED_t{
 	#buttons(int(BUTTON_0, BUTTON_1, BUTTON_2, BUTTON_3, BUTTON_4, BUTTON_5, BUTTON_6, BUTTON_7, BUTTON_8, BUTTON_9, BUTTON_STAR)):int[11];
 	#addData(int('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-')):int[11];
 	#st(0):str;
@@ -296,11 +364,11 @@ $shr(sf_:OLED_t, v_:int):_OLED_t{
 }
 
 ///OLED 분할 시 기본적으로 정수와 소수만 입력합니다.
-$shl2(v_:int, sf_:OLED_t):_OLED_t{
+$shl2(v:_int, sf:_OLED_t):_OLED_t{
 	return(_(sf >>> v));
 }
 
-$shr2(sf_:OLED_t, v_:int):_OLED_t{
+$shr2(sf:_OLED_t, v:_int):_OLED_t{
 	#buttons(int(BUTTON_0, BUTTON_1, BUTTON_2, BUTTON_3, BUTTON_4, BUTTON_5, BUTTON_6, BUTTON_7, BUTTON_8, BUTTON_9, BUTTON_STAR)):int[11];
 	#addData(int('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-')):int[11];
 	#buttonls(int(BUTTON_1L, BUTTON_2L, BUTTON_3L, BUTTON_4L, BUTTON_5L, BUTTON_6L)):int[6];
@@ -353,11 +421,11 @@ $shr2(sf_:OLED_t, v_:int):_OLED_t{
 }
 
 
-$shl(v_:float, sf_:OLED_t):_OLED_t{
+$shl(v:_float, sf:_OLED_t):_OLED_t{
 	return(_(sf >> v));
 }
 
-$shr(sf_:OLED_t, v_:float):_OLED_t{
+$shr(sf:_OLED_t, v:_float):_OLED_t{
 	#buttons(int(BUTTON_0, BUTTON_1, BUTTON_2, BUTTON_3, BUTTON_4, BUTTON_5, BUTTON_6, BUTTON_7, BUTTON_8, BUTTON_9, BUTTON_STAR, BUTTON_HASH)):int[12];
 	#addData(int('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.')):int[12];
 	#st(0):str;

@@ -27,10 +27,17 @@
 ///Standard Operators
 $import(stuop);
 
+$const(GetArgBytes$ref, 0x00008011, ref, int);
+
 ///Operators Complements
 int(x:byte):int{
 	#result(x):int;
 	return(result & 0xFF);
+}
+
+byte(x:int):byte{
+    #result(x):byte;
+    return(result);
 }
 
 int64(x:int):int{
@@ -241,7 +248,7 @@ $shl(out:cout, st:float) : cout{
 }
 
 ///Cin 계열 함수
-$shr(in:cin, ret_:int) : cin{
+$shr(in:cin, ret:_int) : cin{
 	#st():str;
 	if(int(in) == 4){
 		OLED_Scan(_st);
@@ -258,7 +265,7 @@ $shr(in:cin, ret_:int) : cin{
 	return(in);
 }
 
-$shr(in:cin, ret_:float) : cin{
+$shr(in:cin, ret:_float) : cin{
 	#st():str;
 	if(int(in) == 4){
 		OLED_Scan(_st);
@@ -275,7 +282,7 @@ $shr(in:cin, ret_:float) : cin{
 	return(in);
 }
 
-$shr(in:cin, ret_:str) : cin{
+$shr(in:cin, ret:_str) : cin{
 	#st():str;
 	if(int(in) == 4){
 		OLED_Scan(_st);
@@ -292,7 +299,7 @@ $shr(in:cin, ret_:str) : cin{
 	return(in);
 }
 
-$shr(in:cin, ret_:ref) : cin{
+$shr(in:cin, ret:_ref) : cin{
 	if(int(in) == 4){
 		OLED_Scan(_ret);
 	}
@@ -408,19 +415,13 @@ $const(Random, 0x01084012, ref, int);
 $const(SetScrollText$ref, 0x01100012, ref);
 $const(BeginScroll$int$int$int, 0x01102012, ref);
 $const(EndScroll, 0x01103012, ref);
-BeginScroll(freq, limit){
+BeginScroll(freq:int, limit:int){
 	BeginScroll(freq, limit, 0);
 }
 
 ///Button 관련 함수
 $const(BUTTON_Read, 0x000A0012, ref, int);
 $const(BUTTON_Read2, 0x000A1012, ref, int);
-$const(TOUCH_Begin, 0x01087012, ref);
-$const(TOUCH_End, 0x01088012, ref);
-$const(TOUCH_GetData$int, 0x01089012, ref, int);
-$const(TOUCH_GetData$int$ref, 0x0108A012, ref);
-$const(TOUCH_GetData1, 0x0108B012, ref, int);
-$const(TOUCH_Calibrate, 0x0108C012, ref);
 
 ///버튼 관련 상수
 $const(BUTTON_1, 0x0100, int);
@@ -584,15 +585,15 @@ $const(MEM_AvailableSize$ref, 0x00214011, ref, int);
 $const(MEM_GarbageCollect, 0x00215011, ref);
 $const(MEM_AllocThreshold$int, 0x00216011, ref);
 
-Malloc(sf_:ref, size:int){
+Malloc(sf:_ref, size:int){
 	MEM_Malloc(sf_, size);
 }
 
-Realloc(sf_:ref, size:int){
+Realloc(sf:_ref, size:int){
 	MEM_Realloc(sf_, size);
 }
 
-Free(sf_:ref){
+Free(sf:_ref){
 	MEM_Free(sf_);
 }
 
@@ -617,6 +618,7 @@ $const(F_Putc$int$ref, 0x0150A012, ref, int);
 $const(F_Read$ref$ref$int$ref, 0x01504012, ref, int);
 ##SDFile(F_GetFP());
 $const(F_GetFP, 0x0150E012, ref, ref);
+$const(F_Write$ref$ref$int$ref, 0x01505012, ref, int);
 
 F_Getc(fp:ref):int{
     ///OLED << "read:";
@@ -632,6 +634,8 @@ F_Getc(fp:ref):int{
 	}
 	return(result);
 }
+
+##whynot(12);
 
 
 

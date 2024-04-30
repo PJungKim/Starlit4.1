@@ -79,9 +79,9 @@ $const(IMAGE_TwoPrint$ref$ref, 0x00089012, ref);
 
 $const(CHAR_Print$ref$ref$int$color_t$color_t$int$int$int, 0x000B0012, ref);
 $const(MATR_Print$ref, 0x000B1012, ref);
-$const(MATR_Clear$ref, 0x000B2012, ref);
+$const(MATR_Clear, 0x000B2012, ref);
 $const(MATR_Stop, 0x000B8012, ref);
-$const(MATR_Start, 0x000B9012, ref);
+$const(MATR_Start, 0x000B7012, ref);
 $const(MATR_SetInterval$int, 0x000B3012, ref);
 $const(MATR_GetInterval, 0x000B4012, ref, int);
 
