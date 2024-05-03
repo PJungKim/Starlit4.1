@@ -40,9 +40,8 @@
 $import(oled);
 
 main(){
-    #OLED():OLED_t;
-    OLED.Init();
-    OLED << "Hello, World!\n";
+    OLED = OLED_Black();
+    OLED << "Hello, World!" << OLED_endl;
     while(!BUTTON_Read()){}
 }
 ```
@@ -54,6 +53,28 @@ main(){
   <img src = "..\res\GITHUB_SETUP_SLC7.png" width = "40%" height = "40%">
 
 ### 2.3. 코드 해설
+
+#### 2.3.1. OLED = OLED_Black();
+
+- OLED 객체를 정의합니다.
+- OLED_Black은 Adafruit의 SSD1331 RGB OLED 기준으로 배경색이 검정인 상태로 초기화함을 의미합니다.
+
+#### 2.3.2. OLED << "Hello, World!" << OLED_endl;
+
+- OLED에 "Hello, World!"를 출력하라는 의미입니다.
+- `OLED_endl`은 OLED 객체에 대해서 줄바꿈을 수행하라는 의미입니다.
+- C++ 언어의 문법을 참고하여 만들었습니다.
+
+#### 2.3.3. while(!BUTTON_Read()){}
+
+- 버튼을 누를 때까지 기다리라는 의미입니다.
+- waitkey와 매우 유사하지만 실제 임베디드 환경에서 버튼이 있을때 그 버튼을 누를 때까지 기다립니다.
+- StarSVM에서는 BUTTON_Read와 연결된 키보드가 정의되어 있는데 그 키를 누르면 누른 값이 출력됩니다.
+
+#### 2.3.4. 주의사항
+
+- C++에서 std::cout이라고 했다고 Starlit에서 :: 연산자를 쓸 수 있는 것은 아닙니다.
+- C/C++에서 while문 뒤에 세미콜론`;`을 사용할 수 있지만 Starlit에서는 이 부분이 매우 엄격하여 세미콜론 사용이 불가능합니다. 반드시 중괄호를 열고 닫으시기 바랍니다.
 
 ## 3. AResult.sbc
 
