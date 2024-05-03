@@ -47,4 +47,4 @@
   - SI-Unit for Float Literal
   - Fixed some string bugs.
 - 04 Fixed Windows11 API Issue(Virtual Machine Only)
-- 01 Starlit Release
+- 01 Starlit 3.1 Release
