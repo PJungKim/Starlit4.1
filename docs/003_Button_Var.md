@@ -21,34 +21,29 @@
 ```
 $import(oled);
 main(){
-    #OLED():OLED_t;
-    OLED.Init();
+    OLED = OLED_Black();
     while(!BUTTON_Read()){}
 }
 ```
 
-이 코드에서 `#OLED():OLED_t;` 아래쪽에 변수를 하나 추가해 보겠습니다. `#a():int;`라고 적으시면 됩니다. 그 다음 바로 아랫줄에 `a = 1;`이라고 적어 보겠습니다.
+이 코드에서 `OLED = OLED_Black();` 아래쪽에 변수를 하나 추가해 보겠습니다. `a = 1;`이라고 적어 보겠습니다.
 
 ```
 $import(oled);
 main(){
-    #OLED():OLED_t;
-    #a():int;
+    OLED = OLED_Black();
     a = 1;
-    OLED.Init();
     while(!BUTTON_Read()){}
 }
 ```
 
-이제 `OLED.Init();` 아랫쪽에 변수 a의 값을 출력해 보겠습니다. `OLED << a`와 같이 적어 주시면 됩니다.
+이제 `a = 1;` 아랫쪽에 변수 a의 값을 출력해 보겠습니다. `OLED << a`와 같이 적어 주시면 됩니다.
 
 ```
 $import(oled);
 main(){
-    #OLED():OLED_t;
-    #a():int;
+    OLED = OLED_Black();
     a = 1;
-    OLED.Init();
     OLED << a;
     while(!BUTTON_Read()){}
 }
@@ -67,10 +62,8 @@ main(){
 ```
 $import(oled);
 main(){
-    #OLED():OLED_t;
-    #a():int;
+    OLED = OLED_Black();
     a = 1;
-    OLED.Init();
     OLED << "/r%d" % a;
     while(!BUTTON_Read()){}
 }
@@ -81,12 +74,12 @@ main(){
 ### 1.3. 변수 값에 입력받기
 
 이번에는 사용자가 변수에 값을 입력하는 예제입니다. OLED 쪽으로 화살표를 치면 OLED에 출력된다는 뜻이었습니다. 반대로, OLED에서 변수로 화살표를 그리면 어떻게 될까요? 지금 한번 알아보겠습니다. 아래와 같이 코드를 작성해 보겠습니다. `OLED >> a`가 바로 OLED에 a를 입력받겠다는 뜻입니다.
+이번에는 변수 a에 값을 초기화하지 않은 상태로 사용해 보겠습니다. 이때는 `#a():int`와 같이 변수의 자료형을 명시하면 됩니다.
 
 ```
 $import(oled);
 main(){
-    #OLED():OLED_t;
-    OLED.Init();
+    OLED = OLED_Black();
     #a():int;
     OLED >> a;
     OLED << "/1/ra는 /y%d/r입니다." % a;
@@ -102,8 +95,7 @@ main(){
 ```
 $import(oled);
 main(){
-    #OLED():OLED_t;
-    OLED.Init();
+    OLED = OLED_Black();
     #a():int;
     #b():int;
     OLED << "/0a = " >> a;
@@ -122,7 +114,7 @@ main(){
 
 ### 2.1. 버튼 배치표
 
-- 이번에는 버튼을 사용하는 방법을 알아보겠습니다. 우선, 아래와 같이 버튼이 배정되어 있습니다. Starlit은 임베디드용 프로그래밍 언어기 때문에 SVM 상에서 모든 키보드에 대해서 할당되는 것이 아닌 임베디드에 대해서 버튼이 할당되오니 유의해 주시기 바랍니다. 일반적으로 우측에 숫자 키가 따로 있다면, 그 숫자키를 적극적으로 이용하면 편합니다.
+- 이번에는 버튼을 사용하는 방법을 알아보겠습니다. 우선, 아래와 같이 버튼이 배정되어 있습니다. Starlit은 임베디드용 프로그래밍 언어기 때문에 StarSVM 상에서 모든 키보드에 대해서 할당되는 것이 아닌 임베디드에 대해서 버튼이 할당되오니 유의해 주시기 바랍니다. 일반적으로 우측에 숫자 키가 따로 있다면, 그 숫자키를 적극적으로 이용하면 편합니다.
 
   |키보드|버튼 값|
   |------|-------|
@@ -144,8 +136,7 @@ main(){
 ```
 $import(oled);
 main(){
-    #OLED():OLED_t;
-    OLED.Init();
+    OLED = OLED_Black();
     OLED << "/01번 또는 2번 입력" % a;
     while(!BUTTON_Read()){}
 }
