@@ -41,5 +41,10 @@
 
 ### 2024. 04
 
+- 30 Starlit 3.2 Update
+  - Added Call_by_ref and ref_based_variable
+  - Simple Variable Definition
+  - SI-Unit for Float Literal
+  - Fixed some string bugs.
 - 04 Fixed Windows11 API Issue(Virtual Machine Only)
 - 01 Starlit Release
