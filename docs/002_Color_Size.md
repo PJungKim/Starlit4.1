@@ -11,9 +11,8 @@
 ```
 $import(oled);
 main(){
-    #OLED():OLED_t;
-    OLED.Init();
-    OLED << "/rHello, /yWorld!\n";
+    OLED = OLED_Black();
+    OLED << "/rHello, /yWorld!" << OLED_endl;
     while(!BUTTON_Read()){}
 }
 ```
@@ -97,8 +96,7 @@ main(){
   ```
   $import(oled);
   main(){
-      #OLED():OLED_t;
-      OLED.Init();
+      OLED = OLED_Black();
       OLED << "/zA/aA/AA$aA$AA";
       while(!BUTTON_Read()){}
   }
