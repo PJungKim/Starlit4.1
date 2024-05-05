@@ -1,10 +1,10 @@
 # GUE Programming Language
 
-GUE, GUE is a Universal Edition
-You can also call GUEUE, GUEUEUE, ....., But It will be read `gue`, like the last sound of vague, colleague...
-The name GUE is also mean `그`, which is the meaning of `it` in korean language.
-The letter `그` is simillar to number 1 in European style.
-So It also means of the number 1. This is based on Starlit 1.
+## GUE, GUE is a Universal Edition
+- You can also call GUEUE, GUEUEUE, ....., But It will be read `gue`, like the last sound of vague, colleague...
+- The name GUE is also mean `그`, which is the meaning of `it` in korean language.
+- The letter `그` is simillar to number 1 in European style.
+- So It also means of the number 1. This is based on Starlit 1.
 
 ## Why I made GUE...?
 
