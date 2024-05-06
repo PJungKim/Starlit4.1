@@ -4,9 +4,11 @@
 - Starlit은 임베디드의 Flash Memory(MicroSD카드 또는 자체 Flash Memory 등)에 바이너리 저장해서 임베디드 내의 Virtual Machine을 실행해 작동하는 프로그래밍 언어입니다. 임베디드를 더욱 효율적으로 디자인할 수 있습니다.
 
 ## News
-- Soon, GUE language will be released
-- `그` 프로그래밍 언어가 추가됩니다.
-- 초창기 Starlit 언어를 remaster하여 만든 언어로 StarSVM에서 작동합니다.
+<img src="res/GUE/GUELogo.png">
+
+- `그(GUE)` 프로그래밍 언어가 추가되었습니다.
+- Starlit의 초창기 시절을 재구성하여 만들었습니다.
+- 로고는 한글 `그`와 동시에 Starlit 언어의 초창기를 의미하는 숫자 `1`을 상징합니다.
 
 
 
