@@ -68,6 +68,7 @@
         <key name="C" type="file" value="$INSTALL/scriptum/lsf/c.xml" />
         <key name="EDIF" type="file" value="$INSTALL/scriptum/lsf/edif.xml" />
         <key name="Diamond LPF" type="file" value="$INSTALL/scriptum/lsf/lpf.xml" />
+        <key name="GUE" type="file" value="$INSTALL/scriptum/lsf/gue.xml" />
         <key name="Java" type="file" value="$INSTALL/scriptum/lsf/java.xml" />
         <key name="M4" type="file" value="$INSTALL/scriptum/lsf/m4.xml" />
         <key name="Perl" type="file" value="$INSTALL/scriptum/lsf/perl.xml" />
