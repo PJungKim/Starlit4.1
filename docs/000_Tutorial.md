@@ -85,4 +85,4 @@
 
 ## 4. 여담
 
-- 현재 Windows 11에서는 실행이 되지 않는 것으로 파악됩니다. ~~Windows 11은 Pspice도 안돌아간다고 하니 참 골때리긴 합니다...~~
+- Windows 11에서 작동하지 않았으나, Starlit 3.1 후반부터는 Windows 11에서도 동작할 수 있게 GUI 기반의 StarSVM으로 변경하였다.
