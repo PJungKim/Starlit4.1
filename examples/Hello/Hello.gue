@@ -1,0 +1,16 @@
+/**
+  * Example Code "Hello, World!"
+  * Designed By P. D. Starlit
+  * Discription : This prints "Hello, World!" on the OLED layout.
+  
+  * GUE is the programming language for Embedded System.
+  * So, Some keyboard is not assigned to the function BUTTON_Read().
+  * So Some key will not operate. I think you may press Enter to end this program.
+**/
+
+$import gue
+
+start>>
+Print OLED "Hello, World!"
+end 
+
