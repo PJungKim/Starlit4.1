@@ -31,6 +31,9 @@
         <key name = "PrintGrid" />
         <key name = "PrintAxis" />
         <key name = "Scan" />
+        <key name = "ScanInt" />
+        <key name = "ScanIntx" />
+        <key name = "Waitkey" />
         <key name = "Draw" />
         <key name = "Color" />
         <key name = "Pixel" />

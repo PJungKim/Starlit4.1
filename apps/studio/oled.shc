@@ -126,7 +126,7 @@ $class(OLED_t){
 	}
 	
 	Init(x:int, y:int, w:int, h:int, c:int, fc:int){
-	    self.Init(x, y, w, h, c, fc, rot);
+	    self.Init(x, y, w, h, c, fc, 0);
 	}
 	
 	Init(x:int, y:int, w:int, h:int, c:int, fc:int, rot:int){

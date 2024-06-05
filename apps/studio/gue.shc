@@ -1,0 +1,30 @@
+
+///Starlit GUE Remastered
+
+$import(oled);
+$import(stuimg);
+
+#OLED():OLED_t;
+
+main(){
+    OLED = OLED_Black();
+    start();
+    while(!BUTTON_Read()){}
+}
+
+
+ScanInt(ol:OLED_t):int{
+    #result():int;
+    ol >> result;
+    return(result);
+}
+
+ScanIntx(ol:OLED_t):int{
+    #result():int;
+    ol >>> result;
+    return(result);
+}
+
+Waitkey(){
+    while((sw = BUTTON_Read())){}
+}

@@ -153,7 +153,7 @@ $class(graph_t){
     
 }
 
-GRAPH(OLED:_OLED_t, origin:complex_t, scale:complex_t){
+GRAPH(OLED:_OLED_t, origin:complex_t, scale:complex_t):graph_t{
     #gr():graph_t;
     gr.Init(OLED, origin, scale);
     return(gr);

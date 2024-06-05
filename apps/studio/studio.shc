@@ -45,6 +45,104 @@ int64(x:int):int{
     return(result & 0xFFFFFFFF);
 }
 
+str(x:int):str{
+    return("%d" % x);
+}
+
+str(x:float):str{
+    return("%f" % x);
+}
+
+str(x:int64):str{
+    return("%lld" % x);
+}
+
+str(x:ref):str{
+    #result():str;
+    StrCpy(_result, x);
+    return(result);
+}
+
+
+$comma(v:str):str{
+    ///콤마를 찾는다.
+    len = strlen(_v);
+    
+    for(u = 0, u < len, u += 1){
+        if(v.string[u] == '.'){
+            break;
+        }
+    }
+    
+    temp = f"";
+    for(i)from(3)to(u-1){
+        if(i % 3 == 0){
+            strcpy(_temp, _v + u - i);
+            strcpy(_v + u - i, ",");
+            strcat(_v, _temp);
+        }
+    }
+    
+    return(v);
+}
+
+$fill(key:ref, v:str):str{
+    len = strlen(_v);
+    res = f"";
+    
+    for(u = 0, v.string[u] != 0, u += 1){
+        if(v.string[u] == ' '){
+            strcat(_res, key);
+        }
+        else{
+            temp = f"";
+            temp.string[0] = v.string[u];
+            temp.string[1] = 0;
+            strcat(_res, _temp);
+        }
+    }
+    
+    return(res);
+    
+}
+
+$align(mode:int, v:str):str{
+    ///띄어쓰기 기준으로 위치 조정.
+    ///앞의 띄어쓰기 개수 읽기
+    for(b = 0, v.string[b] == ' ', b += 1){}
+    if(mode == '>'){///기본 : 오른쪽 정렬
+        return(v);
+    }
+    elif(mode == '<'){///띄어쓰기 뒤로 빼기
+        temp = f"";
+        strcpy(_temp, _v + b);
+        v.string[b] = 0;
+        strcat(_temp, _v);
+        return(temp);
+    }
+    elif(mode == '^'){///띄어쓰기 뒤로 빼기
+        temp = f"";
+        strcpy(_temp, _v + b - b/2);
+        v.string[b - b/2] = 0;
+        strcat(_temp, _v);
+        return(temp);
+    }
+    elif(mode == '='){///띄어쓰기 뒤로 빼기
+        if(v.string[b] == '+' || v.string[b] == '-'){
+            v.string[0] = v.string[b];
+            v.string[b] = ' ';
+        }
+        return(v);
+    }
+}
+
+
+
+
+
+
+
+
 ///Default Constants : Bool Value and Truth.
 $const(TRUE, 1, int);
 $const(FALSE, 0, int);
