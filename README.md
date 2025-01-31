@@ -21,7 +21,7 @@
       while(!BUTTON_Read()){}
   }
   ```
-
+  <img src="res/EXAMPLE/for_GPT/for.png">
 
 - Starlit 3.3 업데이트사항
 
