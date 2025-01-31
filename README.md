@@ -5,7 +5,25 @@
 
 ## News
 
-- Starlit 3.3 Release
+- Starlit 3.4? 4.0?
+
+  - for문의 혁명! 그리고 자유로운 전역변수!
+  ```
+  $import(oled);
+  OLED = OLED_Black();
+  
+  
+  main(){
+      for(a:1:3:10; b=a+5, c=b*2){
+          OLED << f"/ga=/r{a}, /gb=/r{b}, /gc=/r{c}" << "\n";
+      }
+  
+      while(!BUTTON_Read()){}
+  }
+  ```
+
+
+- Starlit 3.3 업데이트사항
 
   - f-String 기능 추가
   - 배열 대입 기능 추가
