@@ -5,6 +5,14 @@
 
 ## News
 
+- Starlit 4.0 새로운 기능??
+  ```
+  ///IS IT Possible?
+  main
+      OLED << "Hello, World!"
+  ```
+  
+
 - Starlit 3.4? 4.0?
 
   - for문의 혁명! 그리고 자유로운 전역변수!
