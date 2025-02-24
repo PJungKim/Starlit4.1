@@ -10,7 +10,9 @@
   ///IS IT Possible?
   main
       OLED << "Hello, World!"
+      while !BUTTON_Read()
   ```
+  - Starlit 4.0 문법, 확 달라지나...?
   
 
 - Starlit 3.4? 4.0?
