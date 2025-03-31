@@ -17,6 +17,22 @@ $const(OLED_GetCursor1$ref$ref, 0x00E06012, ref);
 $const(OLED_SetRotate$int, 0x00022012, ref);
 $const(OLED_GetRotate, 0x00023012, ref, int);
 
+$const(OLED_RED,         0xFF0000, int);
+$const(OLED_ORANGE,      0xFF8000, int);
+$const(OLED_YELLOW,      0xFFFF00, int);
+$const(OLED_YELLOWGREEN, 0x80FF00, int);
+$const(OLED_LIME,        0x80FF00, int);
+$const(OLED_GREEN,       0x00FF00, int);
+$const(OLED_MINT,        0x00FF80, int);
+$const(OLED_CYAN,        0x00FFFF, int);
+$const(OLED_SEA,         0x0080FF, int);
+$const(OLED_BLUE,        0x0000FF, int);
+$const(OLED_VIOLET,      0x8000FF, int);
+$const(OLED_MAGENTA,     0xFF00FF, int);
+$const(OLED_ROSE,        0xFF0080, int);
+$const(OLED_WHITE,       0xFFFFFF, int);
+$const(OLED_BLACK,       0x000001, int);///투명과 구분을 위해 000001을 사용. 실제로는 000000과 000001 모두 OLED가 꺼짐.
+
 OLED_GetCursor(x:_int, y:_int){
 	OLED_GetCursor1(x_, y_);
 }
@@ -161,9 +177,9 @@ $class(OLED_t){
 		self.Print(_st);
 	}
 	
-	Printf(fm:ref, va:VA_LIST){
+	Printf(fm:str, va:VA_LIST){
 		#st():str;
-		vsprintf(_st, fm, _va);
+		vsprintf(_st, _fm, _va);
 		self.Print(_st);
 	}
 	
@@ -174,16 +190,34 @@ $class(OLED_t){
 		OLED_Line(x, xe, y, ye, col);
 	}
 	
+	Line(x:complex_t, xe:complex_t, col:int){
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
+		OLED_Line(x.re, xe.re, x.im, xe.im, col);
+	}
+	
 	GLine(x:int, y:int, xe:int, ye:int, col:int){
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
 		OLED_SetRotate(self.rotate);
 		OLED_GLine(x, xe, y, ye, col);
 	}
 	
+	GLine(x:complex_t, xe:complex_t, col:int){
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
+		OLED_GLine(x.re, xe.re, x.im, xe.im, col);
+	}
+	
 	Rectangle(x:int, y:int, xe:int, ye:int, outlinecol:int, fillcol:int){
 		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
 		OLED_SetRotate(self.rotate);
 		OLED_Rect(x, xe, y, ye, outlinecol, fillcol);
+	}
+	
+	Rectangle(x:complex_t, xe:complex_t, outlinecol:int, fillcol:int){
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
+		OLED_Rect(x.re, xe.re, x.im, xe.im, outlinecol, fillcol);
 	}
 	
 	Pixel(x:int, y:int, col:int){
@@ -193,12 +227,24 @@ $class(OLED_t){
 		OLED_WriteColor(col);
 	}
 	
+	Pixel(x:complex_t, col:int){
+		OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
+		OLED_AddrWindow(x.re, x.im, 1, 1);
+		OLED_WriteColor(col);
+	}
+	
 	Color(x:int, y:int, xe:int, ye:int, col:int){
 	    OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
 		OLED_SetRotate(self.rotate);
 		OLED_Color(x, xe, y, ye, col);
 	}
 	
+	Color(x:complex_t, xe:complex_t, col:int){
+	    OLED_SetWindow(self.offX, self.offY, self.width, self.height, 1);
+		OLED_SetRotate(self.rotate);
+		OLED_Color(x.re, xe.re, x.im, xe.im, col);
+	}
 	
 	
 	Clear(){

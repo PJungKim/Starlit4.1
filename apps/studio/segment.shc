@@ -1,0 +1,416 @@
+
+$import(oled);
+
+$class(segment_t){
+    #xi:byte;
+    #xe:byte;
+    #yi:byte;
+    #ye:byte;
+    
+    TurnOn(oled:_OLED_t, col:int){
+        oled.Line(self.xi, self.yi, self.xe, self.ye, col);
+    }
+    
+}
+
+##SEG_MARGIN(0x01);
+##SEG_NOEDGE(0x02);
+
+$class(fnd7_t){
+    #oled:_OLED_t;
+    #seg:segment_t[7];///DP 제외.
+    #shape:_byte;///출력 모양
+    
+    Init(oled:_OLED_t, turnOffColor:int, margin:int, style:int){
+        self.oled_ = oled_;
+        w = oled.width - margin - 1;
+        h = (oled.height - 1) / 2;
+        h2 = oled.height - margin - 1;
+        
+        
+        self.seg[0].xi = [margin + style, w - style, margin,         margin     ];
+        self.seg[1].xi = [w,              w,         margin + style, h - style  ];
+        self.seg[2].xi = [w,              w,         h + style,      h2 - style ];
+        self.seg[3].xi = [margin + style, w - style, h2,             h2         ];
+        self.seg[4].xi = [margin,         margin,    h + style,      h2 - style ];
+        self.seg[5].xi = [margin,         margin,    margin + style, h - style  ];
+        self.seg[6].xi = [margin + style, w - style, h,              h          ];
+        
+        self.seg[0:6].TurnOn(self.oled, turnOffColor);
+        
+    }
+    
+    PrintBCD(v:int){
+        v &= 0x0F;
+        ///Turn OFF First
+        for(i)from(0)to(6){
+            if(!((self.shape[v] >> i) & 0x01)){
+                self.seg[i].TurnOff(self.oled);
+            }
+        }
+        
+        ///Turn On
+        for(i)from(0)to(6){
+            if(((self.shape[v] >> i) & 0x01)){
+                self.seg[i].TurnOn(self.oled);
+            }
+        }
+    }
+}
+
+$class(fnd16_t){
+    #oled:_OLED_t;
+    #seg:segment_t[16];///DP 제외.
+    #bcdshape:_byte;///출력 모양
+    #ascshape:_int;///출력 모양
+    
+    Init(oled:_OLED_t, turnOffColor:int, margin:int, style:int){
+        self.oled_ = oled_;
+        w = (oled.width - 1) / 2;
+        w2 = oled.width - margin - 1;
+        h = (oled.height - 1) / 2;
+        h2 = oled.height - margin - 1;
+        
+        self.seg[00].xi = [margin + style, w - style,  margin,         margin     ]; /// a1
+        self.seg[01].xi = [w + style,      w2 - style, margin,         margin     ]; /// a2
+        self.seg[02].xi = [w2,             w2,         margin + style, h - style  ]; /// b
+        self.seg[03].xi = [w2,             w2,         h + style,      h2 - style ]; /// c
+        self.seg[04].xi = [w + style,      w2 - style, h2,             h2         ]; /// d2
+        self.seg[05].xi = [margin + style, w - style,  h2,             h2         ]; /// d1
+        self.seg[06].xi = [margin,         margin,     h + style,      h2 - style ]; /// e
+        self.seg[07].xi = [margin,         margin,     margin + style, h - style  ]; /// f
+        self.seg[08].xi = [margin + style, w - style,  h,              h          ]; /// g1
+        self.seg[09].xi = [w + style,      w2 - style, h,              h          ]; /// g2
+        self.seg[10].xi = [margin + style, w - style,  margin + style, h - style  ]; /// h
+        self.seg[11].xi = [w,              w,          margin + style, h - style  ]; /// i
+        self.seg[12].xi = [w2 - style,     w + style,  margin + style, h - style  ]; /// j
+        self.seg[13].xi = [w2 - style,     w + style,  h2 - style,     h + style  ]; /// k
+        self.seg[14].xi = [w,              w,          h2 - style,     h + style  ]; /// l
+        self.seg[15].xi = [margin + style, w - style,  h2 - style,     h + style  ]; /// m
+        
+        self.seg[0:15].TurnOn(self.oled, turnOffColor);
+    }
+    
+    PrintBCD(v:int, col_on:int, col_off:int){
+        bcd = [0, 0, 1, 2, 3, 3, 4, 5, 6, 6];
+        v &= 0x0F;
+        ///Turn OFF First
+        for(i)from(0)to(9){
+            if(!((self.bcdshape[v] >> bcd[i]) & 0x01)){
+                self.seg[i].TurnOff(self.oled, col_off);
+            }
+        }
+        
+        ///Turn On
+        for(i)from(0)to(9){
+            if(((self.bcdshape[v] >> bcd[i]) & 0x01)){
+                self.seg[i].TurnOn(self.oled, col_on);
+            }
+        }
+    }
+    
+    PrintASC(v:int, col_on:int, col_off:int){
+        v = (v & 0x01F) | ((v >> 1) & 0x20);
+        ///Turn OFF First
+        for(i)from(0)to(15){
+            if(!((self.ascshape[v] >> i) & 0x01)){
+                self.seg[i].TurnOn(self.oled, col_off);
+            }
+        }
+        
+        ///Turn On
+        for(i)from(0)to(15){
+            if(((self.ascshape[v] >> i) & 0x01)){
+                self.seg[i].TurnOn(self.oled, col_on);
+            }
+        }
+    }
+}
+
+
+$class(fndstr_t){
+    #oled:OLED_t[32];
+    #fnd:fnd16_t[32];
+    #shape:int[64];
+    #width:int;
+    #sz:int;
+    #defcol:int;
+    #col:int;
+    #offcol:int;
+    #cursor:int;
+    
+    Init(){
+        OLED_Clear();
+        self.Init(4+j*3, 11+j*19, 8, 3);
+    }
+    
+    Init(offset:complex_t, cell:complex_t, w:int, h:int){
+        self.Init(offset, cell, w, h, 0xFFFFFF, 0x080808);
+    }
+    
+    Init(offset:complex_t, cell:complex_t, w:int, h:int, defaultColor:int, turnoffColor:int){
+        FNDSHAPE_ASCII(self.shape);
+        self.defcol = defaultColor;
+        self.offcol = turnoffColor;
+        self.oled[x:0:(w-1) + y:0:(h-1) * w].Init(offset.re + cell.re * x, offset.im + cell.im * y, cell.re, cell.im);
+        self.fnd[x:0:(w-1) + y:0:(h-1) * w].Init(self.oled[x + y * w], self.offcol, 1, 1);
+        self.fnd[x:0:(w-1) + y:0:(h-1) * w].ascshape_ = _(self.shape);
+        self.width = w;
+        self.sz = w * h;
+        self.cursor = 0;
+    }
+    
+    Clear(){
+        self.fnd[x:0:(self.sz-1)].PrintASC(' ', self.col, self.offcol);
+    }
+    
+    Print(st:str){
+        len = strlen(_st);
+        cols = ['r', 'y', 'g', 'b', 'm', 'c', 'w', 'o', 'l', 't', 's', 'v', 'p', 'k'];
+        hexs = [0xFF0000, 0xFFFF00, 0x00FF00, 0x0000FF, 0xFF00FF, 0x00FFFF, 0xFFFFFF,
+                0xFF8000, 0x80FF00, 0x00FF80, 0x0080FF, 0x8000FF, 0xFF0080, 0x000001];
+        ///dark = [0x220000, 0x222200, 0x002200, 0x000022, 0x220022, 0x002222, 0x222222];
+        
+        self.col = self.defcol;
+        for(i)from(0)to(len-1){
+            if(self.cursor >= self.sz){
+                break;
+            }
+            if(st.string[i] == '/'){
+                for(k)from(0)to(sizeof(hexs) / sizeof(int) - 1){
+                    if(st.string[i + 1] == cols[k]){
+                        i += 1;
+                        self.col = hexs[k];
+                        break;
+                    }
+                }
+                elif(st.string[i + 1] == '/'){
+                    self.fnd[self.cursor].PrintASC(st.string[i], self.col, self.offcol);
+                    i += 1;
+                    self.cursor = (self.cursor + 1) % self.sz;
+                }
+                elif(st.string[i + 1] >= '0' && st.string[i + 1] <= '6'){
+                    i += 1;
+                    self.cursor = (self.width * (st.string[i] - '0')) % self.sz;
+                }
+            }
+            else{
+                self.fnd[self.cursor].PrintASC(st.string[i], self.col, self.offcol);
+                self.cursor = (self.cursor + 1) % self.sz;
+            }
+        }
+    }
+    
+    
+    
+}
+
+$shl(seg:_fndstr_t, st:str):_fndstr_t{
+    seg.Print(st);
+    return(seg_);
+}
+
+$shl(seg:_fndstr_t, st:ref):_fndstr_t{
+    st1 = str;
+    strcpy(_st1, st);
+    seg.Print(st1);
+    return(seg_);
+}
+
+$shl(seg:_fndstr_t, v:int):_fndstr_t{
+    seg.Print("%d" % v);
+    return(seg_);
+}
+
+$shl(seg:_fndstr_t, v:float):_fndstr_t{
+    seg.Print("%.2f" % v);
+    return(seg_);
+}
+
+FND_ScrollString(input:str, sizeLine:int, idx:int):str{
+    result = str;
+    cnt = 0;
+    col = 0;
+    pos = 0;
+    startpos = 0;
+    if(idx < 0){
+        cnt = -idx;
+        result.string[0:(cnt-1)] = ' ';
+        result.string[cnt] = 0;
+        if(cnt >= sizeLine){
+            result.string[sizeLine] = 0;
+            return(result);
+        }
+        idx = 0;
+    }
+    result.string[cnt] = 0;
+    while(int(input.string[pos])){
+        if(input.string[pos] == '/'){
+            pos += 1;
+            if(input.string[pos] == '/'){
+                if(cnt == idx){
+                    if(col){
+                        result.string[0] = '/';
+                        result.string[1] = col;
+                        result.string[2] = 0;
+                    }
+                    startpos = pos;
+                }
+                elif(cnt + 1 == idx + sizeLine){
+                    input.string[pos + 1] = 0;
+                    strcat(_result, _(input.string) + startpos);
+                    return(result);
+                }
+                cnt += 1;
+            }
+            else{
+                col = input.string[pos];
+            }
+        }
+        else{
+            if(cnt == idx){
+                if(col){
+                    result.string[0] = '/';
+                    result.string[1] = col;
+                    result.string[2] = 0;
+                }
+                startpos = pos;
+            }
+            elif(cnt + 1 == idx + sizeLine){
+                input.string[pos + 1] = 0;
+                strcat(_result, _(input.string) + startpos);
+                return(result);
+            }
+            cnt += 1;
+        }
+        pos += 1;
+    }
+    
+    if(startpos){
+        strcat(_result, _(input.string) + startpos);
+    }
+    left = sizeLine - cnt + idx;
+    for(i = 0, i < left, i+=1){
+        strcat(_result, " ");
+    }
+    
+    return(result);
+    
+    
+    
+    
+}
+
+FND_strlen(st:str):int{
+    cnt = 0;
+    i = 0;
+    while(int(st.string[i])){
+        if(st.string[i] == '/'){
+            if(st.string[i+1] == '/'){
+                cnt += 1;
+            }
+            i += 2;
+        }
+        else{
+            cnt += 1;
+            i += 1;
+        }
+    }
+    return(cnt);
+}
+
+
+
+
+
+///FND Shape는 16칸 짜리의 byte 배열이 필요합니다.
+FNDSHAPE_7447(shape:_byte){
+    shape = [
+        0b0111111,
+        0b0000110,
+        0b1011011,
+        0b1001111,
+        0b1100110,
+        0b1101101,
+        0b1111100,
+        0b0000111,
+        0b1111111,
+        0b1100111,
+        0b1011000,
+        0b1001100,
+        0b1100010,
+        0b1101001,
+        0b1111000,
+        0b0000000
+    ];
+}
+
+///별모양 FND ASCII Shape는 64칸짜리의 int 배열이 필요합니다.
+FNDSHAPE_ASCII(shape:_int){
+    shape = [
+        0b0000000000000000, ///" "
+        0b0000100110100001, ///"!"
+        0b0000100010000000, ///"\""
+        0b0100101111000011, ///"#"
+        0b0100101110111011, ///"$"
+        0b1001000010001000, ///"%"
+        0b0101010101010101, 
+        0b0001000000000000, ///"`"
+        0b0100100000010010, ///"("
+        0b0100100000100001, ///")"
+        0b1111111100000000, ///"*"
+        0b0100101100000000, ///"+"
+        0b1000000000000000, ///","
+        0b0000001100000000, ///"-"
+        0b0000000000100000, ///"."
+        0b1001000000000000, ///"/"
+        0b1001000011111111, ///"0"
+        0b0000000000001100,
+        0b0000001101110111,
+        0b0000001100111111,
+        0b0000001110001100,
+        0b0000001110111011,
+        0b0000001111111011,
+        0b0000000010001111,
+        0b0000001111111111,
+        0b0000001110111111,
+        0b0000000000100001,
+        0b1000000000000001,
+        0b0011000000000000,
+        0b0000001100110000,
+        0b1000010000000000,
+        0b0000100010000001,
+        0b0100001011011111,
+        0b1001001000001100,
+        0b0100101000111111,
+        0b0000000011110011,
+        0b0100100000111111,
+        0b0000001111110011,
+        0b0000000111000011,
+        0b0000001011111011,
+        0b0000001111001100,
+        0b0100100000110011,
+        0b0100100000100011,
+        0b0011000111000000,
+        0b0000000011110000,
+        0b0001010011001100,
+        0b0010010011001100,
+        0b0000000011111111,
+        0b0000001111000111,
+        0b0010000011111111,
+        0b0010001111000111,
+        0b0000001110111011,
+        0b0100100000000011,
+        0b0000000011111100,
+        0b1001000011000000,
+        0b1010000011001100,
+        0b1011010000000000,
+        0b0101010000000000,
+        0b1001000000110011,
+        0b0100100100010010,
+        0b0100100000000000,
+        0b0100101000100001,
+        0b0000101010000101,
+        0b0000000000110000
+    ];
+}

@@ -109,6 +109,19 @@ $mod2(a:int64, b:int64):int64{
     return(result);
 }
 
+///max/min
+$const($diamond$int$int,    0x010A0010,     ref,    int     );
+$const($cross$int$int,      0x010A5010,     ref,    int     );
+$const($diamond$float$float,0x010A4010,     ref,    float   );
+$const($cross$float$float,  0x010A9010,     ref,    float   );
+$const(max$int$int,         0x010A0010,     ref,    int     );
+$const(min$int$int,         0x010A5010,     ref,    int     );
+$const(max$float$float,     0x010A4010,     ref,    float   );
+$const(min$float$float,     0x010A9010,     ref,    float   );
+$const(sgn$int$int,         0x010AA010,     ref,    int     );
+$const(sgn$float$float,     0x010AE010,     ref,    float   );
+
+
 ///Addition
 $const($add$int$int,		0x01030010,		ref,	int		);
 $const($add$ref$int,		0x01030010,		ref,	ref		);

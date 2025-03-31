@@ -1,0 +1,47 @@
+$import(oled);
+OLED = OLED_Black();
+##(OLED<<("/r%s"%($)));///문자열만 단독 사용시
+##(OLED<<("/g%s"%str(#)));///숫자만 단독 사용시
+
+
+WaitKey(){
+    while(!BUTTON_Read()){}
+}
+
+Init(){
+    $if(definedF(setup)){
+        setup();
+    }
+    $if(definedF(start)){
+        start();
+    }
+    $if(definedF(main)){
+        main();
+    }
+    $if(definedF(loop)){
+        while(1){
+            loop();
+        }
+    }
+    WaitKey();
+}
+
+IntVal(ol:_OLED_t, st:ref):int{
+    x = int;
+    st >> ol >> x << "\n";
+    return(x);
+}
+
+FloatVal(ol:_OLED_t, st:ref):float{
+    x = float;
+    st >> ol >> x << "\n";
+    return(x);
+}
+
+H(){
+    OLED << "/yHello, World!\n";
+}
+
+Quine(){
+    OLED << "/oQuine";
+}

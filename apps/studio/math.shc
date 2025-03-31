@@ -77,7 +77,7 @@ $const(fdim$float$float, 0x0204B010, ref, float);
 $const(fmax$float$float, 0x0204C010, ref, float);
 $const(fmin$float$float, 0x0204D010, ref, float);
 $const(fma$float$float$float, 0x0204E010, ref, float);
-
+                   
 
 $const(infinity, 0x02050010, ref, float);
 $const(nan$ref, 0x02051010, ref, float);

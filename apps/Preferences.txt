@@ -1,5 +1,7 @@
 STAR3.studioPath=studio;
 STAR3.brate=115200;
 STAR3.port=COM7;
-STAR3.edit=C:\Program Files\HDL Works\Scriptum22Rev1\bin\pc\scriptum.exe;
+STAR3.edit=C:\Program Files\HDL Works\Scriptum24Rev1\bin\pc\scriptum.exe;
 STAR3.VM=;
+STAR3.BASE=;
+STAR3.empty=0;

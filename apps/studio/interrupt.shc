@@ -1,0 +1,35 @@
+
+
+$const(NVIC_TIMER0, 0, int);
+$const(NVIC_TIMER1, 1, int);
+$const(NVIC_TIMER2, 10, int);
+$const(NVIC_TIMER3, 11, int);
+$const(NVIC_BUTTON, 5, int);
+$const(NVIC_SENSOR, 6, int);
+$const(NVIC_BLUETOOTH, 2, int);
+$const(NVIC_FTDI, 3, int);
+$const(NVIC_UART1, 2, int);
+$const(NVIC_UART2, 3, int);
+$const(NVIC_UART3, 4, int);
+$const(NVIC_GPIO, 7, int);
+
+
+$const(NVIC_TIMER0_MSK, 0x0001, int);
+$const(NVIC_TIMER1_MSK, 0x0002, int);
+$const(NVIC_TIMER2_MSK, 0x0400, int);
+$const(NVIC_TIMER3_MSK, 0x0800, int);
+
+
+
+$const(NVIC_AttachInterrupt$int$ref, 0x01700012, ref);
+$const(NVIC_Enable$int, 0x01701012, ref);
+$const(NVIC_Disable$int, 0x01702012, ref);
+$const(NVIC_Mask$int, 0x01703012, ref);
+$const(NVIC_NoMask$int, 0x01704012, ref);
+$const(NVIC_CoolTime$int$int, 0x01705012, ref);
+$const(NVIC_BMask$int$int, 0x01706012, ref);
+$const(NVIC_Sensor_Threshold$int$int, 0x01707012, ref);
+$const(NVIC_Sensor_State, 0x01708012, ref);
+$const(NVIC_GMask$int$int, 0x01709012, ref);
+$const(NVIC_Enable, 0x0170B012, ref);
+$const(NVIC_Disable, 0x0170A012, ref);

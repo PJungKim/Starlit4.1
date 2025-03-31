@@ -1,0 +1,4 @@
+
+GLOBAL_Init__(){
+    OLED=OLED_Black();
+}

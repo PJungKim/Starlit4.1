@@ -1,0 +1,17 @@
+
+$import(studio);
+
+///The main function will operated by initialize function.
+Init(){
+	$if(definedG(OLED) && definedC(OLED_t)){
+		$if(!definedM("OLED_CUSTOMINIT") && sizeof(OLED) == sizeof(OLED_t)){
+			OLED.Init(0, 0, 96, 64);
+		}
+		$if(definedF(main)){
+			main();
+		}
+	}
+	$elif(definedF(main)){
+		main();
+	}
+}

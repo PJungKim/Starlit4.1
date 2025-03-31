@@ -1,0 +1,427 @@
+/**
+    Open Source StarCSV Library
+    This Library will be operated at any SVM which can use the filesystem.
+    Starlit CSV Form File Analysis
+    2024 05 12
+    Designed By Pierre De Starlit.
+    All Right Reserved.
+**/
+
+$import(studio);
+$import(complex);
+
+
+/**
+ * Function : CSV_GetColumnData
+ * Discription : This Function returns some list the values of CSV File.
+ * Param 1 : The address of file(Both Absolute and Relational Address are okay.)
+ * Param 2 : The start row position.
+ * Param 3 : The size of lists
+ * Param 4... : lists to save the CSV Data.
+ * Return : The size of data which is read.
+**/
+CSV_GetColumnData(path:ref, startrow:int, size:int, list:VA_LIST):int{
+    ///Open File
+    F_Open(SDFile, path, FA_READ);
+    #ro(0):int;
+    #co(0):int;
+    #ch(-1):int;
+    #st():str;
+    #sti(0):int;
+    #lst():ref;
+    ///Put the data
+    while(1){
+        ch = F_Getc(SDFile);
+        
+        ///OLED << "%c" % ch;
+        if(ch == (-1)){
+            break(2);
+        }
+        elif(ch == 0x09 || ch == ','){///Comma or Tab
+            if(ro >= startrow){
+                lst = int(_list + 4 * co);
+                float(lst)[ro - startrow] = Atof(_st);
+            }
+            co += 1;
+            sti = 0;
+        }
+        elif(ch == 0x0A){///New Line
+            if(ro >= startrow){
+                lst = int(_list + 4 * co);
+                float(lst)[ro - startrow] = Atof(_st);
+            }
+            ro += 1;
+            co = 0;
+            if(ro >= startrow + size){
+                break(3);
+            }
+            sti = 0;
+        }
+        elif(ch != 0x0D){
+            st.string[sti] = ch;
+            sti += 1;
+            st.string[sti] = 0;
+        }
+    }
+    
+    F_Close(SDFile);
+    
+    return(ro - startrow);
+}
+
+/**
+ * Function : CSV_GetColumnData1
+ * Discription : This Function returns specific list the values of CSV File.
+ * Param 1 : The address of file(Both Absolute and Relational Address are okay.)
+ * Param 2 : The start row position.
+ * Param 3 : The size of lists
+ * Param 4 : The List Which you want to return
+ * Param 5 : Float lists to save the CSV Data.
+ * Return : The size of data which is read.
+**/
+CSV_GetColumnData1(path:ref, startrow:int, size:int, col:int, list:_float):int{
+    ///Open File
+    F_Open(SDFile, path, FA_READ);
+    #ro(0):int;
+    #co(0):int;
+    #ch(-1):int;
+    #st():str;
+    #sti(0):int;
+    ///Put the data
+    while(1){
+        ch = F_Getc(SDFile);
+        
+        ///OLED << "%c" % ch;
+        if(ch == (-1)){
+            break(2);
+        }
+        elif(ch == 0x09 || ch == ','){///Comma or Tab
+            if(ro >= startrow && col == co){
+                list[ro - startrow] = Atof(_st);
+            }
+            co += 1;
+            sti = 0;
+        }
+        elif(ch == 0x0A){///New Line
+            if(ro >= startrow && col == co){
+                list[ro - startrow] = Atof(_st);
+            }
+            ro += 1;
+            co = 0;
+            if(ro >= startrow + size){
+                break(3);
+            }
+            sti = 0;
+        }
+        elif(ch != 0x0D){
+            st.string[sti] = ch;
+            sti += 1;
+            st.string[sti] = 0;
+        }
+    }
+    
+    F_Close(SDFile);
+    
+    return(ro - startrow);
+}
+
+
+
+
+
+/**
+ * Function : CSV_GetColumnData1
+ * Discription : This Function returns specific list the values of CSV File.
+ * Param 1 : The address of file(Both Absolute and Relational Address are okay.)
+ * Param 2 : The start row position.
+ * Param 3 : The size of lists
+ * Param 4 : The List Which you want to return
+ * Param 5 : Complex lists to save the CSV Data.
+ * Return : The size of data which is read.
+**/
+CSV_GetColumnData1(path:ref, startrow:int, size:int, col:int, list:_complex_t):int{
+    ///Open File
+    F_Open(SDFile, path, FA_READ);
+    #ro(0):int;
+    #co(0):int;
+    #ch(-1):int;
+    #st():str;
+    #sti(0):int;
+    ///Put the data
+    while(1){
+        ch = F_Getc(SDFile);
+        
+        ///OLED << "%c" % ch;
+        if(ch == (-1)){
+            break(2);
+        }
+        elif(ch == 0x09 || ch == ','){///Comma or Tab
+            if(ro >= startrow && col == co){
+                list[ro - startrow] = Atoj(_st);
+            }
+            co += 1;
+            sti = 0;
+        }
+        elif(ch == 0x0A){///New Line
+            if(ro >= startrow && col == co){
+                list[ro - startrow] = Atoj(_st);
+            }
+            ro += 1;
+            co = 0;
+            if(ro >= startrow + size){
+                break(3);
+            }
+            sti = 0;
+        }
+        elif(ch != 0x0D){
+            st.string[sti] = ch;
+            sti += 1;
+            st.string[sti] = 0;
+        }
+    }
+    
+    F_Close(SDFile);
+    
+    return(ro - startrow);
+}
+
+
+
+///list가 오름차순일 때 부분 구하기
+CSV_GetPart(list:_float, startVal:float, endVal:float, startidx:_int, size:_int, sizeofList:int){
+    #i():int;
+    startidx = (-1);
+    size = (-1);
+    for(i)from(0)to(sizeofList-1){
+        if(list[i] >= startVal && startidx == (-1)){
+            startidx = i;
+        }
+        elif(list[i] >= endVal && size == (-1)){
+            size = i - startidx;
+        }
+    }
+}
+
+
+///This Function will find the position which is the nearest to zero.
+CSV_OP(list1:_float, list2:_float, start:int, size:int, func:ref):int{
+    #mval(10.0 ^^ 30):float;
+    #v():float;
+    #i():int;
+    #mi(0):int;
+    for(i)from(start)to(start + size-1){
+        v = func(list1[i], list2[i]);
+        if(abs(v) < mval){
+            mval = abs(v);
+            mi = i;
+        }
+    }
+    return(mi);
+}
+
+
+///This Function will find the position which is the nearest to zero.
+CSV_OP(list1:_complex_t, list2:_complex_t, start:int, size:int, func:ref):int{
+    #mval(10.0 ^^ 30):float;
+    #v():complex_t;
+    #i():int;
+    #mi(0):int;
+    for(i)from(start)to(start + size-1){
+        v = func(list1[i], list2[i]);
+        if(abs(v) < mval){
+            mval = abs(v);
+            mi = i;
+        }
+    }
+    return(mi);
+}
+
+
+///This Function will find the position which is the nearest to zero.
+CSV_Eq(list1:_float, list2:_float, start:int, size:int):int{
+    #mval(10.0 ^^ 30):float;
+    #v():float;
+    #i():int;
+    #mi(-1):int;
+    for(i)from(start)to(start + size-1){
+        v = list1[i] - list2[i];
+        if(abs(v) < mval){
+            mval = abs(v);
+            mi = i;
+        }
+    }
+    return(mi);
+}
+
+///This Function will find the position which is the nearest to zero.
+CSV_Eq(list1:_complex_t, list2:_complex_t, start:int, size:int):int{
+    #mval(10.0 ^^ 30):complex_t;
+    #v():complex_t;
+    #i():int;
+    #mi(-1):int;
+    for(i)from(start)to(start + size-1){
+        v = list1[i] - list2[i];
+        if(abs(v) < mval){
+            mval = abs(v);
+            mi = i;
+        }
+    }
+    return(mi);
+}
+
+
+///This Function will find the position which is the nearest to zero.
+CSV_Eqc(list1:_float, list2:_float, start:int, size:int):int{
+    #mval(10.0 ^^ 30):float;
+    #v():float;
+    #i():int;
+    #mi(-1):int;
+    for(i)from(start)to(start + size-2){
+        v = (list1[i] - list2[i]) * (list1[i+1] - list2[i+1]);
+        if(v < 0){
+            if(abs(list1[i] - list2[i]) < abs(list1[i+1] - list2[i+1])){
+                mi = i;
+            }
+            else{
+                mi = i + 1;
+            }
+            break(2);
+        }
+    }
+    return(mi);
+}
+
+
+///This Function will find the position which is the nearest to zero.
+CSV_Eqv(list1:_float, va:float, start:int, size:int):int{
+    #mval(10.0 ^^ 30):float;
+    #v():float;
+    #i():int;
+    #mi(0):int;
+    for(i)from(start)to(start + size-1){
+        v = list1[i] - va;
+        if(abs(v) < mval){
+            mval = abs(v);
+            mi = i;
+        }
+    }
+    return(mi);
+}
+
+///This Function will find the position which is the nearest to zero.
+CSV_Eqv(list1:_complex_t, va:complex_t, start:int, size:int):int{
+    #mval(10.0 ^^ 30):float;
+    #v():complex_t;
+    #i():int;
+    #mi(0):int;
+    for(i)from(start)to(start + size-1){
+        v = list1[i] - va;
+        if(abs(v) < mval){
+            mval = abs(v);
+            mi = i;
+        }
+    }
+    return(mi);
+}
+
+///This Function will find the position which is the nearest to zero.
+CSV_Eqvc(list1:_float, va:float, start:int, size:int):int{
+    #mval(10.0 ^^ 30):float;
+    #v():float;
+    #i():int;
+    #mi(0):int;
+    for(i)from(start)to(start + size-2){
+        v = (list1[i] - va) * (list1[i+1] - va);
+        if(v < 0){
+            if(abs(list1[i] - va) < abs(list1[i+1] - va)){
+                mi = i;
+            }
+            else{
+                mi = i + 1;
+            }
+            break(2);
+        }
+    }
+    return(mi);
+}
+
+CSV_Diff(list1:_float, list2:_float, start:int, size:int, eqval:float):int{
+    #mval(10.0 ^^ 30):float;
+    #v():float;
+    #i():int;
+    #mi(0):int;
+    for(i)from(start+1)to(start + size-1){
+        v = (list2[i] - list2[i - 1]) / (list1[i] - list1[i - 1]) - eqval;
+        if(abs(v) < mval){
+            mval = abs(v);
+            mi = i;
+        }
+    }
+    return(mi);
+}
+
+CSV_Max(list1:_float, start:int, size:int):int{
+    #mval(-(10.0 ^^ 30)):float;
+    #v():float;
+    #i():int;
+    #mi():int;
+    for(i)from(start)to(start + size - 1){
+        if(list1[i] > mval){
+            mval = list1[i];
+            mi = i;
+        }
+    }
+    return(mi);
+}
+
+CSV_Min(list1:_float, start:int, size:int):int{
+    #mval(10.0 ^^ 30):float;
+    #v():float;
+    #i():int;
+    #mi():int;
+    for(i)from(start)to(start + size - 1){
+        if(list1[i] < mval){
+            mval = list1[i];
+            mi = i;
+        }
+    }
+    return(mi);
+}
+
+CSV_AvgS(list:_float, start:int, size:int):float{
+    sum = 0.0;
+    sum += list[i:start:start+size-1];
+    return(sum / size);
+}
+
+CSV_SumS(list:_float, start:int, size:int):float{
+    sum = 0.0;
+    sum += list[i:start:start+size-1];
+    return(sum);
+}
+
+CSV_RMSS(list:_float, start:int, size:int):float{
+    sum = 0.0;
+    sum += list[i:start:start+size-1] * list[i];
+    return(sqrt(sum / size));
+}
+
+CSV_Avg(listt:_float, list:_float, start:int, size:int):float{
+    sum = 0.0;
+    sum += (list[i:start:(start+size-2)] + list[i+1]) * (listt[i+1] - listt[i]) / 2;
+    return(sum / (listt[start + size - 1] - listt[start]));
+}
+
+CSV_Integrate(listt:_float, list:_float, start:int, size:int):float{
+    sum = 0.0;
+    sum += (list[i:start:(start+size-2)] + list[i+1]) * (listt[i+1] - listt[i]) / 2;
+    return(sum);
+}
+
+CSV_RMS(listt:_float, list:_float, start:int, size:int):float{
+    sum = 0.0;
+    sum += (list[i:start:(start+size-2)] * list[i] + list[i+1] * list[i+1]) * (listt[i+1] - listt[i]) / 2;
+    sum /= listt[start + size - 1] - listt[start];
+    return(sqrt(sum));
+}
+

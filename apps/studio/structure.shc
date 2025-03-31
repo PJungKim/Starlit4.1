@@ -1,0 +1,70 @@
+
+
+$import(complex);
+
+
+
+$class(floats64_t){
+    #data:float[64];
+    #start:int;
+    #end:int;
+    
+    ///데이터 초기화
+    Init(){
+        self.data[0:63] = 0.0;
+        self.start = 0;
+        self.end = 0;
+    }
+    
+    ///크기를 구합니다.
+    Size():int{
+        return((self.end - self.start) %% 64);
+    }
+    
+    ///데이터를 추가합니다.
+    Append(data:float){
+        self.data[self.start] = data;
+        self.end = (self.end + 1) %% 64;
+    }
+    
+    ///데이터를 읽고 씁니다(주의! 사이즈는 바뀌지 않습니다.).
+    Data(pos:int):_float{
+        return(_(self.data[(self.start + pos %% self.Size()) %% 64]));
+    }
+    
+    ///데이터를 꺼냅니다(스택).
+    StackOut():float{
+        self.end = (self.end - 1) %% 64; 
+        return(self.data[self.end]);
+    }
+    
+    ///데이터를 꺼냅니다(큐).
+    QueueOut():float{
+        result = self.data[self.start];
+        self.start = (self.start + 1) %% 64;
+        return(result);
+    }
+    
+    ///데이터를 꺼냅니다.(임의의 위치)
+    DeleteData(pos:int):float{
+        result = self.Data(pos);
+        self.Data(p:pos:(self.end - 2)) = self.Data(p + 1);
+        self.end = (self.end - 1) %% 64;
+        return(result);
+    }
+    
+}
+
+
+##FloatStack64{data}(FloatStack64_({data}, sizeof({data}) / sizeof(float)));
+FloatStack64_(data:_float, size:int):floats64_t{
+    #result():floats64_t;
+    result.data[i:0:(size-1)] = data[i];
+    result.start = 0;
+    result.end = size-1;
+    return(result);
+}
+
+
+
+

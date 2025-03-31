@@ -20,12 +20,9 @@
 
 **/
 
-$class(img_t){
-///	#blue:byte[64];
-///	#green:byte[64];
-///	#red:byte[64];
-///	#intensity:byte[64];
+$import(studio);
 
+$class(img_t){
 	#data:byte[4,8,8];
 }
 
@@ -42,6 +39,44 @@ $class(hsv_t, int!){
 	#hue:byte;
 	#reserved:byte;
 }
+
+///Simple Color Selection Index
+$const(IMAGE_RGB,  0x00, int);
+$const(IMAGE_RG,   0x01, int);
+$const(IMAGE_RB,   0x02, int);
+$const(IMAGE_R,    0x03, int);
+$const(IMAGE_GB,   0x04, int);
+$const(IMAGE_G,    0x05, int);
+$const(IMAGE_B,    0x06, int);
+$const(IMAGE_NONE, 0x07, int);
+
+///Image Rotate / Symmetric
+$const(IMAGE_MAINTAIN, 0x00, int);
+$const(IMAGE_ROT_90,   0x01, int);
+$const(IMAGE_ROT_180,  0x02, int);
+$const(IMAGE_ROT_270,  0x03, int);
+$const(IMAGE_SYM_Y,    0x04, int);
+$const(IMAGE_SYM_X,    0x05, int);
+$const(IMAGE_SYM_YX,   0x06, int);
+$const(IMAGE_SYM_Y_X,  0x07, int);
+
+///Constants for Image State Machine
+$const(IMAGE_STATE_RESET,    0x80, int);
+$const(IMAGE_STATE_NO_RESET, 0x00, int);
+$const(IMAGE_STATE_INSTANT,  0x00, int);
+$const(IMAGE_STATE_EXACT,    0x04, int);
+$const(IMAGE_STATE_ZERO,     0x00, int);
+$const(IMAGE_STATE_MAINTAIN, 0x10, int);
+$const(IMAGE_STATE_INVERSE,  0x20, int);
+$const(IMAGE_STATE_INV_INF,  0x30, int);
+$const(IMAGE_STATE_ONE,      0x00, int);
+$const(IMAGE_STATE_DELTA,    0x04, int);
+$const(IMAGE_STATE_RAND_CH,  0x12, int);
+$const(IMAGE_STATE_UP,       0x02, int);
+$const(IMAGE_STATE_DOWN,     0x01, int);
+$const(IMAGE_STATE_RANDOM,   0x03, int);
+
+
 
 $const(IMAGE_Shift$ref$ref$int$int$int$int$int$int$int, 0x00040012, ref);
 $const(IMAGE_Sym$ref$ref$int, 0x00041012, ref);
@@ -76,9 +111,13 @@ $const(IMAGE_TransColor$ref$ref$ref, 0x00086012, ref);
 $const(IMAGE_Ghost$ref$ref$int$int, 0x00087012, ref);
 $const(IMAGE_TwoWrite$ref$int$int$int$int, 0x00088012, ref);
 $const(IMAGE_TwoPrint$ref$ref, 0x00089012, ref);
+IMAGE_TwoPrint(img:ref, st:str){
+    IMAGE_TwoPrint(img, _st);
+}
 
 $const(CHAR_Print$ref$ref$int$color_t$color_t$int$int$int, 0x000B0012, ref);
 $const(MATR_Print$ref, 0x000B1012, ref);
+$const(MATR_PrintL$ref, 0x000B9012, ref);
 $const(MATR_Clear, 0x000B2012, ref);
 $const(MATR_Stop, 0x000B8012, ref);
 $const(MATR_Start, 0x000B7012, ref);
