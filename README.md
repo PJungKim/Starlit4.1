@@ -73,7 +73,7 @@ main:
 - 상황에 맞게 유연하게 코딩할 수 있는 환경 제공 및 개발 속도 대폭 향상
   - Starlit 3 예제
 
-    ```
+    ```C++
     $import(oled);
 
     main(){
@@ -84,7 +84,7 @@ main:
     ```
 
   - Starlit 4 예제
-    ```
+    ```Py
     main
         OLED << "Hello, World!\n"
     ```
