@@ -34,7 +34,7 @@ When approving diversity, The clean code can be developped.
 - 함수의 목적에 맞게 스타일을 다르게 할 수도 있고, 코드에 따라 스타일을 다르게 정의해도 좋다.
 
 ```Py
-SumInts(a:int, b:int):int{
+AddFrom(a:int)to(b:int):int{
     sum = 0;
     for(i:a:b)
         sum += i;
