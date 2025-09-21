@@ -2,6 +2,8 @@
 
 - Starlit의 새로운 버전, Starlit 4
 - [설명서(기본 문법)](Starlit4.md)
+- [설명서(고급 문법)](Starlit4_LV2.md)
+- [설명서(아두이노스타일 문법)](Starlit4_Ard.md)
 
 ## 1. 연혁
 
