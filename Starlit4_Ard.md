@@ -291,7 +291,413 @@
 
 ### 1.6. BUTTON State Machine
 
+- Button State Machine이란?
+  - 버튼이 눌렸는지 안눌렸는지 확인하는 알고리즘
+- Button State Machine의 필요성
+  - Bouncing Effect 발생 : 버튼이 눌리면 순간적으로 떨림에 의해 High-Low-High-Low로 신호가 튐 -> 버튼이 여러번 눌린 것처럼 감지
+  - Button의 변화 명확히 감지 : 버튼이 눌린 것을 감지하는 것이 아니라 버튼에서 발생한 Edge에서 한 번만 실행해야 함.
+- Button State Machine 구조
+  |State|설명|
+  |--|--|
+  |대기상태|버튼이 눌리지 않은 상태|
+  |누름 감지|버튼이 눌리지 않다가 눌림을 처음 감지하고 인식 시간만큼 유지|
+  |누른 상태|버튼이 눌려져 있는 상태|
+  |똄 감지|버튼이 눌려져 있는 상태에서 처음 떼짐을 감지하고 인식 시간만큼 유지|
+- Button 인식 시점
+  - Positive Edge 방식(InSwitch2) : 버튼을 누르고 일정 시간이 지난 시점에서 버튼이 눌림을 감지
+    - 누름 감지에서 누른 상태로 넘어갈 때 값 출력
+    - 장점 : 빠르게 작동시킬 수 있다.
+    - 단점 : 신중하게 작동하기 어려우며, 길게 누르는 동작을 취할 때 반드시 짧게 누르는 동작 1번 출력된 이후에 출력된다.
+  - Negative Edge 방식(InSwitch) : 버튼을 누르고 뗀 시점에서 인식
+    - 뗌 감지에서 대기상태로 넘어갈 때 값 출력
+    - 장점 : 더블클릭, 길게 누름을 별개로 감지할 수 있다.
+    - 단점 : 대체로 작동 속도가 느린 편이다.
+- Inswitch 코드(Negative Edge 방식)
+  - 아래 코드에서 BUTTON_State는 내부버튼의 값을 비트 OR 연산하여 출력하는 값으로 보면 된다.
+    ```Py
+    bstate = 0                      # 버튼 현재 상태
+    bsum = 0                        # 버튼 누적을 위한 변수
+    btime = 0                       # 버튼 입력 시간을 저장하는 변수
+    pbtn = 0                        # Edge를 감지하기 위해 이전 값을 저장하는 변수
+    MINBTIME = 50                   # Edge가 발생하고 대기하는 시간
+    BUTTON_LONG_FLAG1 = 0x00010000  # Long Flag(길게 누름을 처음 감지)
+    BUTTON_LONG_FLAG2 = 0x00020000  # Long Flag(길게 누름을 감지한 이후 연쇄 출력 시)
+
+    InSwitch:int
+        btn = BUTTON_State()
+        when bstate:
+            case 0: # Idle State
+                if btn:
+                    pbtn = btn
+                    bstate = 1
+                    bsum = btn
+                    btime = Tick()
+            case 1: # Rising State - 출력 따로 없음
+                if pbtn != btn
+                    pbtn = btn
+                    bsum |= btn
+                    btime = Tick()
+                if Tick() - btime > MINBTIME:
+                    bstate = 2
+            case 2: # Pushed State - 길게 누르거나 버튼 전체를 떼면 출력
+                if !btn:
+                    pbtn = 0
+                    bstate = 3
+                    btime = Tick()
+                    return bsum
+                elif Tick() - btime > 500:
+                    bstate = 4
+                    btime = Tick()
+                    bsum |= BUTTON_State()
+                    return bsum | BUTTON_LONG_FLAG1
+                else:
+                    bsum |= BUTTON_State()
+            case 3: # Falling State - 버튼을 뗐을 때, 이후에는 버튼 입력 받지 않고 대기
+                if btn:
+                    btime = Tick()
+                if Tick() - btime > MINBTIME:
+                    bstate = 0
+                    bsum = 0
+            case 4: # 길게 누른 경우 실행
+                if !btn:
+                    pbtn = 0
+                    bstate = 3
+                    bsum = 0
+                    btime = Tick()
+                elif Tick() - btime > 80: # 연쇄적으로 길게 누르는 것 출력.
+                    btime = Tick()
+                    return bsum | BUTTON_LONG_FLAG2
+                else:
+                    bsum |= BUTTON_State()
+        return 0
+    ```
+    ```C++
+    bstate = 0;                     /// 버튼 현재 상태
+    bsum = 0;                       /// 버튼 누적을 위한 변수
+    btime = 0;                      /// 버튼 입력 시간을 저장하는 변수
+    pbtn = 0;                       /// Edge를 감지하기 위해 이전 값을 저장하는 변수
+    MINBTIME = 50;                  /// Edge가 발생하고 대기하는 시간
+    BUTTON_LONG_FLAG1 = 0x00010000; /// Long Flag(길게 누름을 처음 감지)
+    BUTTON_LONG_FLAG2 = 0x00020000; /// Long Flag(길게 누름을 감지한 이후 연쇄 출력 시)
+
+    InSwitch():int{
+        btn = BUTTON_State();
+        when(bstate){
+            case 0: /// Idle State
+                if(btn){
+                    pbtn = btn;
+                    bstate = 1;
+                    bsum = btn;
+                    btime = Tick();
+                }
+            case 1: /// Rising State - 출력 따로 없음
+                if(pbtn != btn){
+                    pbtn = btn;
+                    bsum |= btn;
+                    btime = Tick();
+                }
+                if(Tick() - btime > MINBTIME)
+                    bstate = 2;
+            case 2: /// Pushed State - 길게 누르거나 버튼 전체를 떼면 출력
+                if(!btn){
+                    pbtn = 0;
+                    bstate = 3;
+                    btime = Tick();
+                    return bsum;
+                }
+                elif(Tick() - btime > 500){
+                    bstate = 4;
+                    btime = Tick();
+                    bsum |= BUTTON_State();
+                    return bsum | BUTTON_LONG_FLAG1;
+                }
+                else
+                    bsum |= BUTTON_State();
+            case 3: /// Falling State - 버튼을 뗐을 때, 이후에는 버튼 입력 받지 않고 대기
+                if(btn){
+                    btime = Tick();
+                }
+                if(Tick() - btime > MINBTIME){
+                    bstate = 0;
+                    bsum = 0;
+                }
+            case 4: /// 길게 누른 경우 실행
+                if(!btn){
+                    pbtn = 0;
+                    bstate = 3;
+                    bsum = 0;
+                    btime = Tick();
+                }
+                elif(Tick() - btime > 80){ /// 연쇄적으로 길게 누르는 것 출력.
+                    btime = Tick();
+                    return bsum | BUTTON_LONG_FLAG2;
+                }
+                else
+                    bsum |= BUTTON_State();
+        }
+        return 0;
+    }
+    ```
+- Inswitch2 코드(Positive Edge 방식)
+    ```Py
+    bstate = 0                      # 버튼 현재 상태
+    bsum = 0                        # 버튼 누적을 위한 변수
+    btime = 0                       # 버튼 입력 시간을 저장하는 변수
+    pbtn = 0                        # Edge를 감지하기 위해 이전 값을 저장하는 변수
+    MINBTIME = 50                   # Edge가 발생하고 대기하는 시간
+    BUTTON_LONG_FLAG1 = 0x00010000  # Long Flag(길게 누름을 처음 감지)
+    BUTTON_LONG_FLAG2 = 0x00020000  # Long Flag(길게 누름을 감지한 이후 연쇄 출력 시)
+
+    InSwitch2:int
+        btn = BUTTON_State()
+        when bstate:
+            case 0: # Idle State
+                if btn:
+                    pbtn = btn
+                    bstate = 1
+                    bsum = btn
+                    btime = Tick()
+            case 1: # Rising State - Push로 바뀔 때 한 번 출력
+                if pbtn != btn
+                    pbtn = btn
+                    bsum |= btn
+                    btime = Tick()
+                if Tick() - btime > MINBTIME:
+                    bstate = 2
+                    return bsum
+            case 2: # Pushed State - 길게 누를 때 출력과 동시에 State를 4로 변경
+                if !btn:
+                    pbtn = 0
+                    bstate = 3
+                    bsum = 0
+                    btime = Tick()
+                elif Tick() - btime > 500:
+                    bstate = 4
+                    btime = Tick()
+                    return bsum | BUTTON_LONG_FLAG1
+                else:
+                    bsum |= BUTTON_State()
+            case 3: # Falling State - 버튼을 뗐을 때, 이후에는 버튼 입력 받지 않고 대기
+                if btn:
+                    btime = Tick()
+                if Tick() - btime > MINBTIME:
+                    bstate = 0
+            case 4: # 길게 누른 경우 실행
+                if !btn:
+                    pbtn = 0
+                    bstate = 3
+                    bsum = 0
+                    btime = Tick()
+                elif Tick() - btime > 80:
+                    btime = Tick()
+                    return bsum | BUTTON_LONG_FLAG2
+                else:
+                    bsum |= BUTTON_State()
+        return 0
+    ```
+    ```C++
+    bstate = 0;                     /// 버튼 현재 상태
+    bsum = 0;                       /// 버튼 누적을 위한 변수
+    btime = 0;                      /// 버튼 입력 시간을 저장하는 변수
+    pbtn = 0;                       /// Edge를 감지하기 위해 이전 값을 저장하는 변수
+    MINBTIME = 50;                  /// Edge가 발생하고 대기하는 시간
+    BUTTON_LONG_FLAG1 = 0x00010000; /// Long Flag(길게 누름을 처음 감지)
+    BUTTON_LONG_FLAG2 = 0x00020000; /// Long Flag(길게 누름을 감지한 이후 연쇄 출력 시)
+
+    InSwitch2():int{
+        btn = BUTTON_State();
+        when(bstate){
+            case 0: /// Idle State
+                if(btn){
+                    pbtn = btn;
+                    bstate = 1;
+                    bsum = btn;
+                    btime = Tick();
+                }
+            case 1: /// Rising State - Push로 바뀔 때 한 번 출력
+                if(pbtn != btn){
+                    pbtn = btn;
+                    bsum |= btn;
+                    btime = Tick();
+                }
+                if(Tick() - btime > MINBTIME){
+                    bstate = 2;
+                    return bsum;
+                }
+            case 2: /// Pushed State - 길게 누를 때 출력과 동시에 State를 4로 변경
+                if(!btn){
+                    pbtn = 0;
+                    bstate = 3;
+                    bsum = 0;
+                    btime = Tick();
+                }
+                elif(Tick() - btime > 500){
+                    bstate = 4;
+                    btime = Tick();
+                    return bsum | BUTTON_LONG_FLAG1;
+                }
+                else
+                    bsum |= BUTTON_State();
+            case 3: /// Falling State - 버튼을 뗐을 때, 이후에는 버튼 입력 받지 않고 대기
+                if(btn)
+                    btime = Tick();
+                if(Tick() - btime > MINBTIME)
+                    bstate = 0;
+            case 4: /// 길게 누른 경우 실행
+                if(!btn){
+                    pbtn = 0;
+                    bstate = 3;
+                    bsum = 0;
+                    btime = Tick();
+                }
+                elif(Tick() - btime > 80){
+                    btime = Tick();
+                    return bsum | BUTTON_LONG_FLAG2;
+                }
+                else
+                    bsum |= BUTTON_State();
+        }
+        return 0;
+    }
+    ```
+
+### 1.7. Button State Machine의 활용 : 버튼을 눌러 정해진 색의 LED 켜기
+
+- 아래는 버튼을 눌러 10색상환에 해당되는 색을 출력하는 코드이다.
+    |버튼|LED 색상|버튼|LED 색상|
+    |--|--|--|--|
+    |0|빨강|5|청록|
+    |1|주황|6|바다색|
+    |2|노랑|7|파랑|
+    |3|연두|8|보라|
+    |4|초록|9|자홍|
+
+- 소스 코드
+    ```Py
+    $import(inswitch.sh4)
+
+    setup
+        InitSwitch
+        PinMode(3, PWMOUT)
+        PinMode(5, PWMOUT)
+        PinMode(6, PWMOUT)
+        ELED_Begin
+        
+    loop
+        btn = InSwitch2()
+        when btn:
+            case BUTTON_0: # RED
+                AnalogWrite(3, 255)
+                AnalogWrite(5, 0)
+                AnalogWrite(6, 0)
+            case BUTTON_1: # ORANGE
+                AnalogWrite(3, 255)
+                AnalogWrite(5, 96)
+                AnalogWrite(6, 0)
+            case BUTTON_2: # YELLOW
+                AnalogWrite(3, 255)
+                AnalogWrite(5, 255)
+                AnalogWrite(6, 0)
+            case BUTTON_3: # LIME
+                AnalogWrite(3, 128)
+                AnalogWrite(5, 255)
+                AnalogWrite(6, 0)
+            case BUTTON_4: # GREEN
+                AnalogWrite(3, 0)
+                AnalogWrite(5, 255)
+                AnalogWrite(6, 0)
+            case BUTTON_5: # CYAN
+                AnalogWrite(3, 0)
+                AnalogWrite(5, 255)
+                AnalogWrite(6, 255)
+            case BUTTON_6: # SEA
+                AnalogWrite(3, 0)
+                AnalogWrite(5, 128)
+                AnalogWrite(6, 255)
+            case BUTTON_7: # BLUE
+                AnalogWrite(3, 0)
+                AnalogWrite(5, 0)
+                AnalogWrite(6, 255)
+            case BUTTON_8: # VIOLET
+                AnalogWrite(3, 128)
+                AnalogWrite(5, 0)
+                AnalogWrite(6, 255)
+            case BUTTON_9: # MAGENTA
+                AnalogWrite(3, 255)
+                AnalogWrite(5, 0)
+                AnalogWrite(6, 255)
+    ```
+    ```C++
+    $import(inswitch.sh4);
+
+    setup(){
+        InitSwitch;
+        PinMode(3, PWMOUT);
+        PinMode(5, PWMOUT);
+        PinMode(6, PWMOUT);
+        ELED_Begin;
+    }
+
+    loop(){
+        btn = InSwitch2();
+        when(btn){
+            case BUTTON_0: /// RED
+                AnalogWrite(3, 255);
+                AnalogWrite(5, 0);
+                AnalogWrite(6, 0);
+            case BUTTON_1: /// ORANGE
+                AnalogWrite(3, 255);
+                AnalogWrite(5, 96);
+                AnalogWrite(6, 0);
+            case BUTTON_2: /// YELLOW
+                AnalogWrite(3, 255);
+                AnalogWrite(5, 255);
+                AnalogWrite(6, 0);
+            case BUTTON_3: /// LIME
+                AnalogWrite(3, 128);
+                AnalogWrite(5, 255);
+                AnalogWrite(6, 0);
+            case BUTTON_4: /// GREEN
+                AnalogWrite(3, 0);
+                AnalogWrite(5, 255);
+                AnalogWrite(6, 0);
+            case BUTTON_5: /// CYAN
+                AnalogWrite(3, 0);
+                AnalogWrite(5, 255);
+                AnalogWrite(6, 255);
+            case BUTTON_6: /// SEA
+                AnalogWrite(3, 0);
+                AnalogWrite(5, 128);
+                AnalogWrite(6, 255);
+            case BUTTON_7: /// BLUE
+                AnalogWrite(3, 0);
+                AnalogWrite(5, 0);
+                AnalogWrite(6, 255);
+            case BUTTON_8: /// VIOLET
+                AnalogWrite(3, 128);
+                AnalogWrite(5, 0);
+                AnalogWrite(6, 255);
+            case BUTTON_9: /// MAGENTA
+                AnalogWrite(3, 255);
+                AnalogWrite(5, 0);
+                AnalogWrite(6, 255);
+        }
+    }
+    ```
+
+
 ## 2. PuTTY/UART 관련 예제
+
+### 2.1. UART를 통해 출력하기
+
+### 2.2. 글자 색 입혀 출력하기
+
+### 2.3. 글자 위치 정하고 출력하기
+
+### 2.4. 
+
+
+
 
 ## 3. OLED/Display 관련 예제
 
