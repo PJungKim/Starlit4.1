@@ -690,7 +690,40 @@
 
 ### 2.1. UART를 통해 출력하기
 
+- Hello, World 출력 예제
+
+```Py
+setup
+    FTDI_Begin(115200) # FTDI 활성화
+
+loop
+    PuTTY_cout << "/0Hello, World!" # PuTTY(TeraTerm) 창에 0번째 줄에 출력
+    Delay(100) # 과도한 출력으로 인해 PuTTY 멈춤 현상 방지를 위해 기다림.
+```
+```C++
+setup(){
+    FTDI_Begin(115200); /// FTDI 활성화
+}
+
+loop(){
+    PuTTY_cout << "/0Hello, World!"; /// PuTTY(TeraTerm) 창에 0번째 줄에 출력
+    Delay(100); /// 과도한 출력으로 인해 PuTTY 멈춤 현상 방지를 위해 기다림.
+}
+```
+
+
 ### 2.2. 글자 색 입혀 출력하기
+
+- Hello는 초록색, World는 빨간색으로 출력하기
+```Py
+setup
+    FTDI_Begin(115200) # FTDI 활성화
+
+loop
+    PuTTY_cout << "/0/gHello, /rWorld!" # PuTTY(TeraTerm) 창에 0번째 줄에 출력
+    Delay(100) # 과도한 출력으로 인해 PuTTY 멈춤 현상 방지를 위해 기다림.
+```
+
 
 ### 2.3. 글자 위치 정하고 출력하기
 
