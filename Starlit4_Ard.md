@@ -688,17 +688,20 @@
 
 ## 2. PuTTY/UART 관련 예제
 
+- PuTTY 관련 예제는 Teraterm에서도 실행 가능하다.
+- Teraterm은 매크로 지원이 가능하므로 시간만 가능하다면 테라텀으로 특정 시나리오를 돌려 보는 것도 상당히 흥미로운 일이다. 
+
 ### 2.1. UART를 통해 출력하기
 
-- Hello, World 출력 예제
+- 1초에 한 번씩 Hello, World 출력하는 예제
 
 ```Py
 setup
     FTDI_Begin(115200) # FTDI 활성화
 
 loop
-    PuTTY_cout << "/0Hello, World!" # PuTTY(TeraTerm) 창에 0번째 줄에 출력
-    Delay(100) # 과도한 출력으로 인해 PuTTY 멈춤 현상 방지를 위해 기다림.
+    PuTTY << "Hello, World!" # PuTTY(TeraTerm) 창에 출력
+    Delay(1000)
 ```
 ```C++
 setup(){
@@ -706,28 +709,109 @@ setup(){
 }
 
 loop(){
-    PuTTY_cout << "/0Hello, World!"; /// PuTTY(TeraTerm) 창에 0번째 줄에 출력
-    Delay(100); /// 과도한 출력으로 인해 PuTTY 멈춤 현상 방지를 위해 기다림.
+    PuTTY << "Hello, World!"; /// PuTTY(TeraTerm) 창에 출력
+    Delay(1000);
 }
 ```
 
 
 ### 2.2. 글자 색 입혀 출력하기
 
-- Hello는 초록색, World는 빨간색으로 출력하기
+- 1초에 한 번씩 Hello는 초록색, World는 빨간색으로 출력하기
 ```Py
 setup
     FTDI_Begin(115200) # FTDI 활성화
 
 loop
-    PuTTY_cout << "/0/gHello, /rWorld!" # PuTTY(TeraTerm) 창에 0번째 줄에 출력
-    Delay(100) # 과도한 출력으로 인해 PuTTY 멈춤 현상 방지를 위해 기다림.
+    PuTTY << "/gHello, /rWorld!" # Hello는 초록색, World는 빨간색으로 출력
+    Delay(1000)
+```
+```C++
+setup(){
+    FTDI_Begin(115200); /// FTDI 활성화
+}
+
+loop(){
+    PuTTY << "/gHello, /rWorld!"; /// Hello는 초록색, World는 빨간색으로 출력
+    Delay(1000);
+}
 ```
 
+- 글자 색상표
+  |기호|색상|기호|색상|기호|색상|
+  |---|----|---|----|---|---|
+  |`/r`|빨강|`/g`|초록|`/b`|파랑|
+  |`/o`|주황|`/t`|에메랄드|`/v`|남보라|
+  |`/y`|노랑|`/c`|청록|`/m`|자홍|
+  |`/l`|연두|`/s`|바다|`/p`|장미색|
+  |`/w`|흰색|`/k`|검정|`/K` `/W`|회색(일부 환경에서는 미지원)|
+- 글자 색상 제어 관련
+  - `/#FFFF00` : HEX Code를 사용하여 색상을 입힐 수 있다.
+    - `"/#%06x" % color` 꼴의 연산으로 색을 입혀도 좋다.
+    - `f"/#{col:06x}"` 꼴의 표현으로도 색을 입힐 수 있다.
+  - 연한 색상 : 대문자 사용(예: 빨강이 `/r`이면 분홍은 `/R`)
+  - 어두운 색상 : `d` 추가해서 사용(예: 주황이 `/o`이면 갈색은 `/do`)
+  - 흐린 색상 : `/dR` 같은 경우 분홍에서 명도만 낮춘 흐린 색상이 출력된다.
+
+- 추후 PuTTY 환경에서도 간편하게 배경색, 밑줄, 볼드체 등을 적용하는 코드도 추가할 예정이다.
 
 ### 2.3. 글자 위치 정하고 출력하기
 
-### 2.4. 
+- 항상 같은 위치에서 1씩 증가하여 글자 출력하는 코드(0.1초 간격)
+```Py
+setup
+    FTDI_Begin(115200) # FTDI 활성화
+
+v = 0
+loop
+    PuTTY << f"/0Value = {v}" # PuTTY(TeraTerm) 창에 0번째 줄에 출력
+    Delay(100) # 0.1초 기다림.
+    v += 1 # v값 1 증가
+```
+```c++
+setup(){
+    FTDI_Begin(115200); /// FTDI 활성화
+}
+
+v = 0;
+loop(){
+    PuTTY << f"/0Value = {v}"; /// PuTTY(TeraTerm) 창에 0번째 줄에 출력
+    Delay(100); /// 0.1초 기다림.
+    v += 1; /// v값 1 증가
+}
+```
+
+### 2.4. PuTTY창에서 데이터 받아오기
+
+- 두 수의 합 출력 예제
+
+```Py
+setup
+    FTDI_Begin(115200)
+
+a = 0
+b = 0
+loop
+    "Input a : " >> PuTTY >> a
+    "Input b : " >> PuTTY >> b
+    PuTTY << f"The Sum is {a + b}\r\n"
+```
+```C++
+setup(){
+    FTDI_Begin(115200);
+}
+
+a = 0;
+b = 0;
+loop(){
+    "Input a : " >> PuTTY >> a;
+    "Input b : " >> PuTTY >> b;
+    PuTTY << f"The Sum is {a + b}\r\n";
+}
+```
+
+
+
 
 
 
